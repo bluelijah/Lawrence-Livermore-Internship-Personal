@@ -185,7 +185,15 @@ export class WaveAnimation {
     // Reset transform then apply DPR scale each frame so we
     // don't accumulate transforms if the context was reset by a resize.
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
+
+    // Fade existing pixels toward transparent to create a tracer trail.
+    // destination-out reduces alpha of whatever is already on the canvas,
+    // leaving a decaying ghost of previous wave positions.
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.globalAlpha = 0.18;
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
 
     // Draw axis line
     ctx.beginPath();
