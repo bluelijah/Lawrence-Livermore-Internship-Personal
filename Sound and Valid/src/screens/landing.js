@@ -59,80 +59,76 @@ export function render(container) {
   const soundVisual = createSoundVisual();
   animations.push(soundVisual);
 
-  edu.appendChild(
-    el("div", { className: "card mb-16" },
-      el("h2", { className: "mb-8" }, t("landing.edu.whatIsSound")),
-      el("p", {}, t("landing.edu.whatIsSoundP1")),
-      el("p", { className: "mt-8" }, t("landing.edu.whatIsSoundP2")),
-      el("p", { className: "mt-8" }, t("landing.edu.whatIsSoundP3")),
-      el("div", { className: "section-anim-wrap" }, soundVisual.element)
-    )
+  const soundCard = el("div", { className: "card mb-16" },
+    el("h2", { className: "mb-8" }, t("landing.edu.whatIsSound")),
+    el("p", {}, t("landing.edu.whatIsSoundP1")),
+    el("p", { className: "mt-8" }, t("landing.edu.whatIsSoundP2")),
+    el("p", { className: "mt-8" }, t("landing.edu.whatIsSoundP3")),
+    el("div", { className: "section-anim-wrap" }, soundVisual.element)
   );
+  edu.appendChild(soundCard);
 
   // ── 2. What Determines Frequency? ──
   const freqExplorer = createFrequencyExplorer();
   animations.push(freqExplorer);
 
-  edu.appendChild(
-    el("div", { className: "card mb-16" },
-      el("h2", { className: "mb-8" }, t("landing.edu.whatDetermines")),
-      el("p", {}, t("landing.edu.whatDeterminesIntro")),
-      el("div", { className: "mt-8" },
-        el("h3", {}, t("landing.edu.stiffnessTitle")),
-        el("p", {}, t("landing.edu.stiffnessBody"))
-      ),
-      el("div", { className: "mt-8" },
-        el("h3", {}, t("landing.edu.densityTitle")),
-        el("p", {}, t("landing.edu.densityBody"))
-      ),
-      el("div", { className: "mt-8" },
-        el("h3", {}, t("landing.edu.geometryTitle")),
-        el("p", {}, t("landing.edu.geometryBody"))
-      ),
-      freqExplorer.element
-    )
+  const freqCard = el("div", { className: "card mb-16" },
+    el("h2", { className: "mb-8" }, t("landing.edu.whatDetermines")),
+    el("p", {}, t("landing.edu.whatDeterminesIntro")),
+    el("div", { className: "mt-8" },
+      el("h3", {}, t("landing.edu.stiffnessTitle")),
+      el("p", {}, t("landing.edu.stiffnessBody"))
+    ),
+    el("div", { className: "mt-8" },
+      el("h3", {}, t("landing.edu.densityTitle")),
+      el("p", {}, t("landing.edu.densityBody"))
+    ),
+    el("div", { className: "mt-8" },
+      el("h3", {}, t("landing.edu.geometryTitle")),
+      el("p", {}, t("landing.edu.geometryBody"))
+    ),
+    freqExplorer.element
   );
+  edu.appendChild(freqCard);
 
   // ── 3. The Formula ──
   const formulaVisual = createFormulaVisual();
   animations.push(formulaVisual);
 
-  edu.appendChild(
-    el("div", { className: "card mb-16" },
-      el("h2", { className: "mb-8" }, t("landing.edu.formulaTitle")),
-      el("div", { className: "formula-block" },
-        el("div", { className: "formula-text-fit" },
-          "f = (\u03B2L)\u00B2 \u00D7 h / (4\u03C0\u221A3 \u00D7 L\u00B2) \u00D7 \u221A(E / \u03C1)"
-        )
-      ),
-      el("p", { className: "mt-8" }, t("landing.edu.formulaIntro")),
-      el("div", { className: "mt-8" },
-        el("p", {}, t("landing.edu.formulaBetaL")),
-        el("p", {}, t("landing.edu.formulaH")),
-        el("p", {}, t("landing.edu.formulaL")),
-        el("p", {}, t("landing.edu.formulaE")),
-        el("p", {}, t("landing.edu.formulaRho"))
-      ),
-      el("p", { className: "mt-8" }, t("landing.edu.formulaNote")),
-      el("div", { className: "section-anim-wrap" }, formulaVisual.element)
-    )
+  const formulaCard = el("div", { className: "card mb-16" },
+    el("h2", { className: "mb-8" }, t("landing.edu.formulaTitle")),
+    el("div", { className: "formula-block" },
+      el("div", { className: "formula-text-fit" },
+        "f = (\u03B2L)\u00B2 \u00D7 h / (4\u03C0\u221A3 \u00D7 L\u00B2) \u00D7 \u221A(E / \u03C1)"
+      )
+    ),
+    el("p", { className: "mt-8" }, t("landing.edu.formulaIntro")),
+    el("div", { className: "mt-8" },
+      el("p", {}, t("landing.edu.formulaBetaL")),
+      el("p", {}, t("landing.edu.formulaH")),
+      el("p", {}, t("landing.edu.formulaL")),
+      el("p", {}, t("landing.edu.formulaE")),
+      el("p", {}, t("landing.edu.formulaRho"))
+    ),
+    el("p", { className: "mt-8" }, t("landing.edu.formulaNote")),
+    el("div", { className: "section-anim-wrap" }, formulaVisual.element)
   );
+  edu.appendChild(formulaCard);
 
   // ── 4. How to Play ──
   const tunerVisual = createTunerVisual();
   animations.push(tunerVisual);
 
-  edu.appendChild(
-    el("div", { className: "card mb-16" },
-      el("h2", { className: "mb-8" }, t("landing.edu.howToPlay")),
-      el("p", {}, t("landing.edu.step1")),
-      el("p", { className: "mt-8" }, t("landing.edu.step2")),
-      el("p", { className: "mt-8" }, t("landing.edu.step3")),
-      el("p", { className: "mt-8" }, t("landing.edu.step4")),
-      el("p", { className: "mt-8" }, t("landing.edu.step5")),
-      el("div", { className: "section-anim-wrap" }, tunerVisual.element)
-    )
+  const tunerCard = el("div", { className: "card mb-16" },
+    el("h2", { className: "mb-8" }, t("landing.edu.howToPlay")),
+    el("p", {}, t("landing.edu.step1")),
+    el("p", { className: "mt-8" }, t("landing.edu.step2")),
+    el("p", { className: "mt-8" }, t("landing.edu.step3")),
+    el("p", { className: "mt-8" }, t("landing.edu.step4")),
+    el("p", { className: "mt-8" }, t("landing.edu.step5")),
+    el("div", { className: "section-anim-wrap" }, tunerVisual.element)
   );
+  edu.appendChild(tunerCard);
 
   // Bottom CTA
   edu.appendChild(
@@ -149,13 +145,35 @@ export function render(container) {
   // Remove #app constraints for full-bleed landing
   container.classList.add("landing-active");
 
-  // Start all animations
+  // Start hero wave immediately (always visible)
   const wave = new WaveAnimation(canvas);
   wave.start();
-  for (const anim of animations) anim.start();
+
+  // Start section animations only when scrolled into view
+  const pairs = [
+    { anim: soundVisual,   elem: soundCard   },
+    { anim: freqExplorer,  elem: freqCard    },
+    { anim: formulaVisual, elem: formulaCard },
+    { anim: tunerVisual,   elem: tunerCard   },
+  ];
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const pair = pairs.find(p => p.elem === entry.target);
+      if (!pair) continue;
+      if (entry.isIntersecting) {
+        pair.anim.start();
+      } else {
+        pair.anim.destroy();
+      }
+    }
+  }, { threshold: 0.1 });
+
+  for (const pair of pairs) observer.observe(pair.elem);
 
   // Cleanup
   return () => {
+    observer.disconnect();
     wave.destroy();
     for (const anim of animations) anim.destroy();
     container.classList.remove("landing-active");
