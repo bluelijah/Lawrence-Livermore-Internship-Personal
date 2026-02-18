@@ -197,7 +197,7 @@ export function render(container, objectId) {
     el("span", { className: "font-mono" }, formatDimension(currentLength))
   );
 
-  // Compute slider range — use presets to cover full range if available
+  // Compute slider range; use presets to cover full range if available
   const presetLengths = (obj.presets || []).map((p) => p.length);
   const allLengths = [obj.dimensions.length, ...presetLengths];
   const minLength = Math.min(...allLengths) * 0.5;

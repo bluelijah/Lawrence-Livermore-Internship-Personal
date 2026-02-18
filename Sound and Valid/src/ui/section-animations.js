@@ -3,10 +3,10 @@
  *
  * Each factory returns { element: HTMLElement, start(): void, destroy(): void }.
  *
- * 1. Sound Wave   — Tuning fork with expanding pressure arcs
- * 2. Freq Explorer — Sliders for stiffness / density / geometry + live readout
- * 3. Formula Flow  — Variables (E, ρ, L) feeding into frequency result
- * 4. Tuner Lock-on — Needle homing in on target frequency
+ * 1. Sound Wave:    Tuning fork with expanding pressure arcs
+ * 2. Freq Explorer: Sliders for stiffness / density / geometry + live readout
+ * 3. Formula Flow:  Variables (E, ρ, L) feeding into frequency result
+ * 4. Tuner Lock-on: Needle homing in on target frequency
  */
 
 import { el } from "./components.js";
@@ -72,7 +72,7 @@ function canvasAnim(className, drawFn) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// 1. SOUND WAVE — Tuning fork vibrating with expanding pressure arcs
+// 1. SOUND WAVE: Tuning fork vibrating with expanding pressure arcs
 // ═════════════════════════════════════════════════════════════════════════════
 
 export function createSoundVisual() {
@@ -142,7 +142,7 @@ export function createSoundVisual() {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// 2. FREQUENCY EXPLORER — Interactive sliders + vibrating beam + readout
+// 2. FREQUENCY EXPLORER: Interactive sliders + vibrating beam + readout
 // ═════════════════════════════════════════════════════════════════════════════
 
 export function createFrequencyExplorer() {
@@ -273,7 +273,7 @@ export function createFrequencyExplorer() {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// 3. FORMULA FLOW — Variable nodes (E, ρ, L) pulsing into frequency output
+// 3. FORMULA FLOW: Variable nodes (E, ρ, L) pulsing into frequency output
 // ═════════════════════════════════════════════════════════════════════════════
 
 export function createFormulaVisual() {
@@ -409,7 +409,7 @@ export function createFormulaVisual() {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// 4. TUNER LOCK-ON — Needle oscillating then settling on target
+// 4. TUNER LOCK-ON: Needle oscillating then settling on target
 // ═════════════════════════════════════════════════════════════════════════════
 
 export function createTunerVisual() {

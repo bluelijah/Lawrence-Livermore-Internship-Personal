@@ -51,7 +51,7 @@ export class AudioEngine {
 
     this.micSource = this.audioCtx.createMediaStreamSource(this.micStream);
     this.micSource.connect(this.analyser);
-    // Do NOT connect to destination — prevents feedback loop
+    // Do NOT connect to destination; prevents feedback loop
   }
 
   stopMicrophone() {
