@@ -65,7 +65,7 @@ export function render(container) {
   const yAxis = el("div", { className: "catalog-axis-y" });
   const xAxis = el("div", { className: "catalog-axis-x" });
 
-  // Y axis ticks — large at top/bottom, small in between
+  // Y axis ticks: large at top/bottom, small in between
   const yTickCount = 10;
   for (let i = 0; i <= yTickCount; i++) {
     const large = i === 0 || i === yTickCount;
@@ -76,7 +76,7 @@ export function render(container) {
     yAxis.appendChild(tick);
   }
 
-  // X axis ticks — large at left/right ends, small in between
+  // X axis ticks: large at left/right ends, small in between
   const xTickCount = 6;
   for (let i = 0; i <= xTickCount; i++) {
     const large = i === 0 || i === xTickCount;

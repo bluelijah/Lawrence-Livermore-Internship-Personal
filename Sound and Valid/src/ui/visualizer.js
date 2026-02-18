@@ -1,5 +1,5 @@
 /**
- * Waveform visualizer — shows the time-domain audio signal
+ * Waveform visualizer: shows the time-domain audio signal
  * as a scrolling oscilloscope display.
  */
 

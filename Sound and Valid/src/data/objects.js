@@ -2,7 +2,7 @@ import { MATERIALS } from "./materials.js";
 import { calcBarFrequency } from "./formulas.js";
 
 /**
- * Object catalog — 18 objects spanning all material categories.
+ * Object catalog: 18 objects spanning all material categories.
  *
  * Each object has a specific material, geometry, and boundary condition.
  * Dimensions are chosen so that fundamental frequencies land mostly
@@ -45,7 +45,7 @@ const OBJECT_DEFINITIONS = [
     id: "steel_ruler",
     name: "Steel Ruler (Clamped)",
     description:
-      "A thin steel ruler clamped to a table edge — the classic classroom demo.",
+      "A thin steel ruler clamped to a table edge, the classic classroom demo.",
     materialKey: "steel",
     shape: "bar",
     boundary: "cantilever",
@@ -78,7 +78,7 @@ const OBJECT_DEFINITIONS = [
     id: "oak_plank",
     name: "Oak Plank",
     description:
-      "A thick white oak plank — wood is less stiff than metal, so it vibrates at lower frequencies.",
+      "A thick white oak plank. Wood is less stiff than metal, so it vibrates at lower frequencies.",
     materialKey: "oak",
     shape: "bar",
     boundary: "free-free",
@@ -89,7 +89,7 @@ const OBJECT_DEFINITIONS = [
     id: "maple_bar",
     name: "Maple Marimba Bar",
     description:
-      "A sugar maple bar shaped like a marimba key — maple is prized for its bright, clear tone.",
+      "A sugar maple bar shaped like a marimba key. Maple is prized for its bright, clear tone.",
     materialKey: "maple",
     shape: "bar",
     boundary: "free-free",
@@ -100,7 +100,7 @@ const OBJECT_DEFINITIONS = [
     id: "pine_board",
     name: "Pine Board",
     description:
-      "A soft pine board — less dense and less stiff than hardwoods.",
+      "A soft pine board, less dense and less stiff than hardwoods.",
     materialKey: "pine",
     shape: "bar",
     boundary: "free-free",
@@ -124,7 +124,7 @@ const OBJECT_DEFINITIONS = [
     id: "porcelain_tile",
     name: "Porcelain Tile",
     description:
-      "A porcelain floor tile — ceramics are stiff and produce clear tones when tapped.",
+      "A porcelain floor tile. Ceramics are stiff and produce clear tones when tapped.",
     materialKey: "porcelain",
     shape: "bar",
     boundary: "free-free",
@@ -135,7 +135,7 @@ const OBJECT_DEFINITIONS = [
     id: "alumina_bar",
     name: "Alumina Ceramic Bar",
     description:
-      "An alumina (Al₂O₃) bar — extremely stiff. Used in cutting tools and armor.",
+      "An extremely stiff alumina (Al₂O₃) bar, used in cutting tools and armor.",
     materialKey: "alumina",
     shape: "bar",
     boundary: "free-free",
@@ -148,7 +148,7 @@ const OBJECT_DEFINITIONS = [
     id: "abs_strip",
     name: "ABS Plastic Strip",
     description:
-      "An ABS strip — the plastic used in LEGO bricks. Much less stiff than metals.",
+      "An ABS strip, the plastic used in LEGO bricks. Much less stiff than metals.",
     materialKey: "abs",
     shape: "bar",
     boundary: "free-free",
@@ -159,7 +159,7 @@ const OBJECT_DEFINITIONS = [
     id: "polycarb_sheet",
     name: "Polycarbonate Sheet",
     description:
-      "A polycarbonate sheet — used in safety glasses and bulletproof windows.",
+      "A polycarbonate sheet, used in safety glasses and bulletproof windows.",
     materialKey: "polycarbonate",
     shape: "bar",
     boundary: "free-free",
@@ -170,7 +170,7 @@ const OBJECT_DEFINITIONS = [
     id: "acrylic_bar",
     name: "Acrylic Bar",
     description:
-      "An acrylic (plexiglass) bar — transparent and moderately stiff for a plastic.",
+      "An acrylic (plexiglass) bar, transparent and moderately stiff for a plastic.",
     materialKey: "acrylic",
     shape: "bar",
     boundary: "free-free",
@@ -183,7 +183,7 @@ const OBJECT_DEFINITIONS = [
     id: "tuning_fork",
     name: "Steel Tuning Fork Prong",
     description:
-      "One prong of a standard A4 tuning fork — the reference pitch for musical tuning.",
+      "One prong of a standard A4 tuning fork, the reference pitch for musical tuning.",
     materialKey: "steel",
     shape: "bar",
     boundary: "cantilever",
@@ -194,7 +194,7 @@ const OBJECT_DEFINITIONS = [
     id: "oak_xylophone",
     name: "Oak Xylophone Key",
     description:
-      "A xylophone key carved from white oak — shorter and thicker for a higher pitch.",
+      "A xylophone key carved from white oak, shorter and thicker for a higher pitch.",
     materialKey: "oak",
     shape: "bar",
     boundary: "free-free",
@@ -205,7 +205,7 @@ const OBJECT_DEFINITIONS = [
     id: "glass_chime",
     name: "Glass Wind Chime",
     description:
-      "A soda-lime glass tube used as a wind chime — long and thin for a gentle ring.",
+      "A soda-lime glass tube used as a wind chime, long and thin for a gentle ring.",
     materialKey: "soda_glass",
     shape: "bar",
     boundary: "free-free",

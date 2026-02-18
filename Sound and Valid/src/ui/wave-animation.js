@@ -51,7 +51,7 @@ export class WaveAnimation {
 
     this._boundDraw = this._draw.bind(this);
     this._resizeHandler = () => {
-      // Debounce resize — only mark dirty, let the draw loop handle it
+      // Debounce resize: only mark dirty, let the draw loop handle it
       this._dirty = true;
     };
 
@@ -67,7 +67,7 @@ export class WaveAnimation {
     const bw = Math.round(rect.width * dpr);
     const bh = Math.round(rect.height * dpr);
 
-    // Only touch the buffer when the size actually changed —
+    // Only touch the buffer when the size actually changed;
     // setting canvas.width/height clears the buffer and resets context state.
     if (this.canvas.width !== bw || this.canvas.height !== bh) {
       this.canvas.width = bw;
@@ -113,9 +113,9 @@ export class WaveAnimation {
    * Uses smooth easing (cosine interpolation) to avoid any abrupt transitions.
    *
    * Lifecycle within each cycle:
-   *   0%–15%  : fade in  (opacity 0→1, amp 0→max)  — smoothstep
+   *   0%–15%  : fade in  (opacity 0→1, amp 0→max)  via smoothstep
    *   15%–70% : breathe  (opacity 1, amp oscillates 0.65×max → max)
-   *   70%–90% : fade out (opacity 1→0, amp max→0)  — smoothstep
+   *   70%–90% : fade out (opacity 1→0, amp max→0)  via smoothstep
    *   90%–100%: hidden
    */
   _envelope(elapsed, wave) {
@@ -203,7 +203,7 @@ export class WaveAnimation {
     ctx.lineTo(w, centerY);
     ctx.stroke();
 
-    // Time-based phase — no per-frame accumulation, so no drift or jumpiness
+    // Time-based phase; no per-frame accumulation, so no drift or jumpiness
     const elapsed = performance.now() / 1000 - this._startTime;
 
     // Draw each wave

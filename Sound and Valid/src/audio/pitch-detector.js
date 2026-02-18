@@ -62,7 +62,7 @@ export class PitchDetector {
       return { frequency: -1, clarity: 0 }; // Too quiet
     }
 
-    // 2. Trim buffer — find where signal crosses near zero at edges
+    // 2. Trim buffer: find where signal crosses near zero at edges
     //    This reduces edge artifacts in the correlation
     let r1 = 0;
     let r2 = SIZE - 1;
@@ -89,7 +89,7 @@ export class PitchDetector {
       return { frequency: -1, clarity: 0 };
     }
 
-    // 3. Autocorrelation — compute normalized correlation at each lag
+    // 3. Autocorrelation: compute normalized correlation at each lag
     const correlations = new Float32Array(trimmedSize);
     for (let offset = 0; offset < trimmedSize; offset++) {
       let sum = 0;

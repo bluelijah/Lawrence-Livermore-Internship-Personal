@@ -241,7 +241,7 @@ export class FrequencyMeter {
     } else {
       const offset = Math.abs((this.detectedHz / this.targetHz - 1) * 100);
       if (offset < 5) {
-        this.statusEl.textContent = "Almost there — hold it!";
+        this.statusEl.textContent = "Almost there, hold it!";
         this.statusEl.className = "match-status close";
       } else if (offset < 15) {
         this.statusEl.textContent =
