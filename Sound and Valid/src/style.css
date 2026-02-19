@@ -30,6 +30,7 @@
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
   --max-width: 480px;
   --color-wave-axis: #d0d5dd;
+  --color-catalog-axis: #a0a6b0;
   --color-wave-1: #0DA186;
   --color-wave-2: #0D72A1;
   --color-wave-3: #0DA13C;
@@ -54,6 +55,7 @@
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
     --color-wave-axis: #3a3a4a;
+    --color-catalog-axis: #62627e;
     --color-wave-1: #3ac4aa;
     --color-wave-2: #3ba8d4;
     --color-wave-3: #3ac46a;
@@ -309,7 +311,7 @@ p {
   top: 0;
   bottom: 0;
   width: 1.5px;
-  background: var(--color-border);
+  background: var(--color-catalog-axis);
 }
 
 .catalog-axis-x {
@@ -318,7 +320,7 @@ p {
   left: calc(-1 * var(--axis-offset));
   right: calc(-1 * (100vw - 100%) / 4);
   height: 1.5px;
-  background: var(--color-border);
+  background: var(--color-catalog-axis);
 }
 
 @media (min-width: 992px) {
@@ -331,7 +333,7 @@ p {
 /* Tick marks */
 .axis-tick {
   position: absolute;
-  background: var(--color-border);
+  background: var(--color-catalog-axis);
 }
 
 /* Horizontal ticks on Y axis (stick out to the right) */
@@ -624,6 +626,47 @@ p {
 .slider-group input[type="range"] {
   width: 100%;
   accent-color: var(--color-primary);
+}
+
+.slider-value-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.slider-number-input {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  width: 4.5em;
+  text-align: right;
+  border: none;
+  border-bottom: 1.5px solid transparent;
+  background: transparent;
+  color: inherit;
+  padding: 0 2px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.slider-number-input:focus {
+  border-bottom-color: var(--color-primary);
+}
+
+.slider-number-input::-webkit-inner-spin-button,
+.slider-number-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.slider-number-input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.slider-unit {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
 }
 
 /* ─── Presets ─── */

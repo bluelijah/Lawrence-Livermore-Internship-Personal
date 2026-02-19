@@ -12,6 +12,13 @@ import { formatFreq, formatDimension } from "../utils/helpers.js";
 const TOLERANCE = 0.05;
 const MATCH_DURATION = 1.5;
 
+/** Returns display unit info for a dimension value in meters. */
+function dimUnit(meters) {
+  if (meters >= 1)    return { unit: "m",  factor: 1,    dec: 3 };
+  if (meters >= 0.01) return { unit: "cm", factor: 100,  dec: 1 };
+  return                     { unit: "mm", factor: 1000, dec: 1 };
+}
+
 export function render(container, objectId) {
   const obj = getObjectById(objectId);
   if (!obj) {
@@ -163,6 +170,9 @@ export function render(container, objectId) {
       Math.abs(freq - obj.frequency) < 1 ? "var(--color-primary)" : "var(--color-warning)";
   }
 
+  const lenU = dimUnit(currentLength);
+  const thickU = dimUnit(currentThickness);
+
   // Length presets (if object defines them)
   const lengthSlider = el("div", { className: "slider-group" });
 
@@ -176,7 +186,7 @@ export function render(container, objectId) {
         onclick: () => {
           currentLength = preset.length;
           lengthInput.value = String(currentLength);
-          lengthLabel.querySelector(".font-mono").textContent = formatDimension(currentLength);
+          lenNumInput.value = (currentLength * lenU.factor).toFixed(lenU.dec);
           presetBtns.forEach((b) => b.classList.remove("active"));
           btn.classList.add("active");
           updateWhatIf();
@@ -189,12 +199,20 @@ export function render(container, objectId) {
     lengthSlider.appendChild(presetRow);
   }
 
-  // Length slider
+  // Length slider with editable value input
+  const lenNumInput = el("input", {
+    type: "number",
+    className: "slider-number-input",
+    value: (currentLength * lenU.factor).toFixed(lenU.dec),
+  });
   const lengthLabel = el(
     "div",
     { className: "slider-label" },
     el("span", {}, "Length"),
-    el("span", { className: "font-mono" }, formatDimension(currentLength))
+    el("div", { className: "slider-value-wrap" },
+      lenNumInput,
+      el("span", { className: "slider-unit" }, lenU.unit),
+    ),
   );
 
   // Compute slider range; use presets to cover full range if available
@@ -211,38 +229,72 @@ export function render(container, objectId) {
     value: String(currentLength),
     oninput: (e) => {
       currentLength = parseFloat(e.target.value);
-      lengthLabel.querySelector(".font-mono").textContent = formatDimension(currentLength);
-      // Deactivate preset buttons when manually sliding
+      lenNumInput.value = (currentLength * lenU.factor).toFixed(lenU.dec);
       if (obj.presets) {
         lengthSlider.querySelectorAll(".preset-btn").forEach((b) => b.classList.remove("active"));
       }
       updateWhatIf();
     },
   });
+
+  lenNumInput.addEventListener("change", () => {
+    const raw = parseFloat(lenNumInput.value);
+    if (isNaN(raw)) { lenNumInput.value = (currentLength * lenU.factor).toFixed(lenU.dec); return; }
+    currentLength = Math.max(minLength, Math.min(maxLength, raw / lenU.factor));
+    lenNumInput.value = (currentLength * lenU.factor).toFixed(lenU.dec);
+    lengthInput.value = String(currentLength);
+    if (obj.presets) {
+      lengthSlider.querySelectorAll(".preset-btn").forEach((b) => b.classList.remove("active"));
+    }
+    updateWhatIf();
+  });
+  lenNumInput.addEventListener("keydown", (e) => { if (e.key === "Enter") lenNumInput.blur(); });
+
   lengthSlider.appendChild(lengthLabel);
   lengthSlider.appendChild(lengthInput);
   screen.appendChild(lengthSlider);
 
-  // Thickness slider
+  // Thickness slider with editable value input
+  const thickNumInput = el("input", {
+    type: "number",
+    className: "slider-number-input",
+    value: (currentThickness * thickU.factor).toFixed(thickU.dec),
+  });
+  const minThick = obj.dimensions.thickness * 0.25;
+  const maxThick = obj.dimensions.thickness * 4;
   const thickSlider = el("div", { className: "slider-group" });
   const thickLabel = el(
     "div",
     { className: "slider-label" },
     el("span", {}, "Thickness"),
-    el("span", { className: "font-mono" }, formatDimension(currentThickness))
+    el("div", { className: "slider-value-wrap" },
+      thickNumInput,
+      el("span", { className: "slider-unit" }, thickU.unit),
+    ),
   );
   const thickInput = el("input", {
     type: "range",
-    min: String(obj.dimensions.thickness * 0.25),
-    max: String(obj.dimensions.thickness * 4),
+    min: String(minThick),
+    max: String(maxThick),
     step: "0.0001",
     value: String(currentThickness),
     oninput: (e) => {
       currentThickness = parseFloat(e.target.value);
-      thickLabel.querySelector(".font-mono").textContent = formatDimension(currentThickness);
+      thickNumInput.value = (currentThickness * thickU.factor).toFixed(thickU.dec);
       updateWhatIf();
     },
   });
+
+  thickNumInput.addEventListener("change", () => {
+    const raw = parseFloat(thickNumInput.value);
+    if (isNaN(raw)) { thickNumInput.value = (currentThickness * thickU.factor).toFixed(thickU.dec); return; }
+    currentThickness = Math.max(minThick, Math.min(maxThick, raw / thickU.factor));
+    thickNumInput.value = (currentThickness * thickU.factor).toFixed(thickU.dec);
+    thickInput.value = String(currentThickness);
+    updateWhatIf();
+  });
+  thickNumInput.addEventListener("keydown", (e) => { if (e.key === "Enter") thickNumInput.blur(); });
+
   thickSlider.appendChild(thickLabel);
   thickSlider.appendChild(thickInput);
   screen.appendChild(thickSlider);
