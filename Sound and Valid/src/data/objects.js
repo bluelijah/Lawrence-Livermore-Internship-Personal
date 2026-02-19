@@ -2,7 +2,7 @@ import { MATERIALS } from "./materials.js";
 import { calcBarFrequency } from "./formulas.js";
 
 /**
- * Object catalog: 20 objects spanning all material categories.
+ * Object catalog: 18 objects spanning all material categories.
  *
  * Each object has a specific material, geometry, and boundary condition.
  * Dimensions are chosen so that fundamental frequencies land mostly
@@ -83,17 +83,6 @@ const OBJECT_DEFINITIONS = [
     shape: "bar",
     boundary: "free-free",
     dimensions: { length: 0.35, width: 0.050, thickness: 0.018 },
-    difficulty: 1,
-  },
-  {
-    id: "maple_bar",
-    name: "Maple Marimba Bar",
-    description:
-      "A sugar maple bar shaped like a marimba key. Maple is prized for its bright, clear tone.",
-    materialKey: "maple",
-    shape: "bar",
-    boundary: "free-free",
-    dimensions: { length: 0.38, width: 0.045, thickness: 0.020 },
     difficulty: 1,
   },
   {
@@ -210,17 +199,6 @@ const OBJECT_DEFINITIONS = [
     shape: "bar",
     boundary: "cantilever",
     dimensions: { length: 0.084, width: 0.006, thickness: 0.0038 },
-    difficulty: 1,
-  },
-  {
-    id: "oak_xylophone",
-    name: "Oak Xylophone Key",
-    description:
-      "A xylophone key carved from white oak, shorter and thicker for a higher pitch.",
-    materialKey: "oak",
-    shape: "bar",
-    boundary: "free-free",
-    dimensions: { length: 0.30, width: 0.038, thickness: 0.015 },
     difficulty: 1,
   },
   {

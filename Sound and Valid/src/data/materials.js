@@ -47,13 +47,6 @@ export const MATERIALS = {
     category: "woods",
     color: "#806517",
   },
-  maple: {
-    name: "Sugar Maple",
-    E: 12.6e9,
-    rho: 705,
-    category: "woods",
-    color: "#C4A882",
-  },
   pine: {
     name: "Ponderosa Pine",
     E: 8.9e9,

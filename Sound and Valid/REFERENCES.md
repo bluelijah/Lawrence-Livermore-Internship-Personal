@@ -245,4 +245,4 @@ The app uses autocorrelation-based pitch detection rather than FFT peak-picking,
 | Acrylic (PMMA) properties | Correct | MIT, MakeItFrom |
 | Soft Vinyl (PVC Eraser) properties | Correct | MakeItFrom Flexible PVC, Engineering ToolBox |
 | Tuning fork frequency | 444.0 Hz (0.9% from real 440 Hz) | Cross-referenced with COMSOL simulation |
-| All 20 object frequencies | 128-903 Hz range | Within human vocal range |
+| All 18 object frequencies | 128-903 Hz range | Within human vocal range |
