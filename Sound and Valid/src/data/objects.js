@@ -2,7 +2,7 @@ import { MATERIALS } from "./materials.js";
 import { calcBarFrequency } from "./formulas.js";
 
 /**
- * Object catalog: 18 objects spanning all material categories.
+ * Object catalog: 20 objects spanning all material categories.
  *
  * Each object has a specific material, geometry, and boundary condition.
  * Dimensions are chosen so that fundamental frequencies land mostly
@@ -107,6 +107,17 @@ const OBJECT_DEFINITIONS = [
     dimensions: { length: 0.40, width: 0.080, thickness: 0.015 },
     difficulty: 2,
   },
+  {
+    id: "pencil",
+    name: "Wooden Pencil",
+    description:
+      "A standard No. 2 pencil, modeled as solid incense cedar. The graphite core is less than 2% of the cross-section and has negligible effect on bending stiffness.",
+    materialKey: "cedar",
+    shape: "bar",
+    boundary: "free-free",
+    dimensions: { length: 0.19, width: 0.007, thickness: 0.007 },
+    difficulty: 3,
+  },
 
   // ── Glass & Ceramics ──
   {
@@ -176,6 +187,17 @@ const OBJECT_DEFINITIONS = [
     boundary: "free-free",
     dimensions: { length: 0.20, width: 0.020, thickness: 0.008 },
     difficulty: 1,
+  },
+  {
+    id: "eraser",
+    name: "Vinyl Eraser",
+    description:
+      "A standard rectangular vinyl eraser. Soft vinyl is one of the least stiff materials in the catalog, giving it a deep, low resonance for its small size.",
+    materialKey: "vinyl",
+    shape: "bar",
+    boundary: "free-free",
+    dimensions: { length: 0.065, width: 0.023, thickness: 0.011 },
+    difficulty: 2,
   },
 
   // ── Special / Educational ──

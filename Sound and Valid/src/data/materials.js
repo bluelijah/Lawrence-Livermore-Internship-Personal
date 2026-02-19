@@ -61,6 +61,13 @@ export const MATERIALS = {
     category: "woods",
     color: "#DEB887",
   },
+  cedar: {
+    name: "Incense Cedar",
+    E: 7.6e9,
+    rho: 370,
+    category: "woods",
+    color: "#C49A6C",
+  },
   soda_glass: {
     name: "Soda-Lime Glass",
     E: 72e9,
@@ -102,6 +109,13 @@ export const MATERIALS = {
     rho: 1180,
     category: "plastics",
     color: "#E0F0FF",
+  },
+  vinyl: {
+    name: "Soft Vinyl (PVC Eraser)",
+    E: 1e7,
+    rho: 1300,
+    category: "plastics",
+    color: "#F0EDE6",
   },
 };
 

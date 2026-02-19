@@ -22,7 +22,7 @@ src/
 │   ├── play.js              Second mode-select hub (reached from bottom nav).
 │   ├── daily-match.js       Daily challenge. One object per day, mic-match gameplay.
 │   ├── race.js              Bingo-card speed mode. Match as many as possible.
-│   ├── catalog.js           Browse all 18 objects by category.
+│   ├── catalog.js           Browse all 20 objects by category.
 │   ├── object-detail.js     Per-object detail: formula breakdown, practice mode.
 │   └── tutorial.js          First-run walkthrough.
 │
@@ -103,13 +103,13 @@ The app uses only mode 1 (the fundamental) for all gameplay. Modes 2-4 are store
 
 ### Object Catalog (`objects.js`)
 
-18 objects across 4 material categories (metals, woods, glass/ceramics, plastics). Every object is a `{material, dimensions, boundary}` tuple. Frequencies are computed once at module import time. `OBJECTS` is a static array of fully resolved objects with pre-computed `frequency` values.
+20 objects across 4 material categories (metals, woods, glass/ceramics, plastics). Every object is a `{material, dimensions, boundary}` tuple. Frequencies are computed once at module import time. `OBJECTS` is a static array of fully resolved objects with pre-computed `frequency` values.
 
 Difficulty ratings (1-3) reflect how hard the frequency is to match with the human voice: 200-500 Hz is easy, very low or very high is hard.
 
 ### Materials (`materials.js`)
 
-13 materials. Each entry stores only two physics values: `E` (Pa) and `rho` (kg/m³). All values cross-referenced against multiple engineering databases; see `REFERENCES.md` for full sourcing. Notable range: ABS plastic at 2.3 GPa vs alumina ceramic at 370 GPa (161x stiffer).
+15 materials. Each entry stores only two physics values: `E` (Pa) and `rho` (kg/m³). All values cross-referenced against multiple engineering databases; see `REFERENCES.md` for full sourcing. Notable range: soft vinyl at 10 MPa vs alumina ceramic at 370 GPa (37000x stiffer).
 
 ---
 
@@ -208,7 +208,7 @@ Canvas oscilloscope used in the play screens. Reads `Float32Array` from `Analyse
 
 **Race (`race.js`):** Bingo-card of objects. Players match as many as they can. Timer-based.
 
-**Catalog (`catalog.js`):** Filterable grid of all 18 objects by material category. Tapping an object navigates to `object-detail.js`.
+**Catalog (`catalog.js`):** Filterable grid of all 20 objects by material category. Tapping an object navigates to `object-detail.js`.
 
 **Object Detail (`object-detail.js`):** Shows full formula breakdown (step-by-step via `calcBarFrequencyDetailed()`), material properties, and a practice mode with the full `FrequencyMeter` UI.
 

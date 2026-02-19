@@ -109,6 +109,13 @@ All wood values are at 12% moisture content (standard reference condition).
   - Confirms 449 kg/m³
 - **NOTE:** An earlier version of this app used ρ = 510 kg/m³, which was 13.6% too high. This was corrected to 449 kg/m³ based on the USDA reference.
 
+#### Incense Cedar: E = 7.6 GPa, ρ = 370 kg/m³
+- **USDA Forest Products Laboratory, Wood Handbook (Chapter 5)**: https://www.fpl.fs.usda.gov/documnts/fplgtr/fpl_gtr190.pdf
+  - Table 5-1: Incense cedar MOE = 7.65 GPa at 12% MC; density ~370 kg/m³ (specific gravity 0.36)
+- **AmesWeb, Density of Wood**: https://amesweb.info/Materials/Density-of-Wood.aspx
+  - Reports ~370 kg/m³ for incense cedar
+- **Modeling note:** The pencil is modeled as solid incense cedar. The graphite/clay core is approximately 1.8% of the cross-sectional area and contributes negligibly to bending stiffness (stiffness weighted by I = bh³/12 per layer; the core runs through the centroidal axis where h ≈ 0).
+
 ### Glass & Ceramics
 
 #### Soda-Lime Glass: E = 72 GPa, ρ = 2500 kg/m³
@@ -146,6 +153,13 @@ All wood values are at 12% moisture content (standard reference condition).
   - Lists E = 3.2 GPa (exact match)
 - **MakeItFrom, PMMA**: https://www.makeitfrom.com/material-properties/Polymethylmethacrylate-PMMA-Acrylic
   - Reports E = 2.9-3.3 GPa, ρ = 1170-1200 kg/m³ (within range)
+
+#### Soft Vinyl (PVC Eraser): E = 10 MPa, ρ = 1300 kg/m³
+- **MakeItFrom, Flexible PVC**: https://www.makeitfrom.com/material-properties/Flexible-Polyvinyl-Chloride-Flexible-PVC
+  - Reports E = 2.4-19 MPa for flexible/plasticized PVC; eraser-grade vinyl falls in this range
+- **Engineering ToolBox, Rubber and Elastomers**: https://www.engineeringtoolbox.com/rubber-elastomers-young-modulus-d_1588.html
+  - Soft PVC/vinyl reported at 1-50 MPa depending on plasticizer content; eraser-grade ~10 MPa
+- **Modeling note:** Vinyl erasers are heavily plasticized PVC. E = 10 MPa is conservative (stiff end of soft vinyl); a softer eraser would give a lower frequency. The ρ = 1300 kg/m³ is typical for PVC compounds.
 
 ---
 
@@ -222,11 +236,13 @@ The app uses autocorrelation-based pitch detection rather than FFT peak-picking,
 | White Oak properties | Correct | AmesWeb, WoodworkWeb |
 | Sugar Maple properties | Correct | AmesWeb, Beacon Hardwoods |
 | Ponderosa Pine properties | Corrected | ρ fixed from 510 to 449 kg/m³ per USDA data |
+| Incense Cedar properties | Correct | USDA Wood Handbook, AmesWeb |
 | Soda-Lime Glass properties | Correct | MakeItFrom, Wikipedia |
 | Porcelain properties | Correct | Models traditional porcelain (not engineering grade) |
 | Alumina (Al₂O₃) properties | Correct | Accuratus, MatWeb |
 | ABS Plastic properties | Correct | MakeItFrom, Wikipedia |
 | Polycarbonate properties | Correct | Wikipedia, Princeton |
 | Acrylic (PMMA) properties | Correct | MIT, MakeItFrom |
+| Soft Vinyl (PVC Eraser) properties | Correct | MakeItFrom Flexible PVC, Engineering ToolBox |
 | Tuning fork frequency | 444.0 Hz (0.9% from real 440 Hz) | Cross-referenced with COMSOL simulation |
-| All 18 object frequencies | 128-883 Hz range | Within human vocal range |
+| All 20 object frequencies | 128-903 Hz range | Within human vocal range |
