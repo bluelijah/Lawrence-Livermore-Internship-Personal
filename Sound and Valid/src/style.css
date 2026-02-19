@@ -639,17 +639,23 @@ p {
   font-size: 0.85rem;
   width: 4.5em;
   text-align: right;
-  border: none;
-  border-bottom: 1.5px solid transparent;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
   background: transparent;
   color: inherit;
-  padding: 0 2px;
+  padding: 1px 5px;
   outline: none;
-  transition: border-color 0.15s;
+  cursor: text;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.slider-number-input:hover {
+  border-color: var(--color-primary);
 }
 
 .slider-number-input:focus {
-  border-bottom-color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
 }
 
 .slider-number-input::-webkit-inner-spin-button,

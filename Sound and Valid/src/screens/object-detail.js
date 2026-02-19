@@ -90,20 +90,6 @@ export function render(container, objectId) {
   }
   screen.appendChild(formulaBlock);
 
-  // Target frequency display
-  screen.appendChild(
-    el(
-      "div",
-      { className: "text-center mt-16" },
-      el("p", { className: "text-secondary text-sm" }, "Natural Frequency"),
-      el("div", {
-        className: "font-mono",
-        style: { fontSize: "2rem", fontWeight: "700", color: "var(--color-primary)" },
-        textContent: formatFreq(obj.frequency),
-      })
-    )
-  );
-
   // Controls
   const controls = el("div", { className: "flex gap-8 mt-16 justify-between" });
 
