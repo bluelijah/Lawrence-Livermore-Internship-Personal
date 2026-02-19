@@ -1,148 +1,181 @@
-import { el, icons } from "../ui/components.js";
+import { el } from "../ui/components.js";
 import { navigate } from "../router.js";
-import { getDailyStreak, hasTutorialBeenSeen } from "../utils/storage.js";
+import { WaveAnimation } from "../ui/wave-animation.js";
+import { t, isRTL } from "../utils/i18n.js";
+import {
+  createSoundVisual,
+  createFrequencyExplorer,
+  createFormulaVisual,
+  createTunerVisual,
+} from "../ui/section-animations.js";
 
 export function render(container) {
-  const streak = getDailyStreak();
-  const showTutorialPrompt = !hasTutorialBeenSeen();
+  const screen = el("div", { className: "landing-screen" });
+  if (isRTL()) screen.setAttribute("dir", "rtl");
 
-  const screen = el(
-    "div",
-    { className: "screen" },
+  // Track all animations for cleanup
+  const animations = [];
 
-    // Header
-    el(
-      "div",
-      { className: "screen-header home-header text-center" },
-      el("h1", {}, "Sound and Valid"),
-      el("p", {}, "Learn how materials shape sound")
-    ),
+  // ── Hero section (full viewport) ──
 
-    // Tutorial prompt
-    showTutorialPrompt
-      ? el(
-          "div",
-          {
-            className: "card mt-16",
-            style: {
-              borderColor: "var(--color-primary)",
-              background: "var(--color-primary-light)",
-            },
-          },
-          el("h3", {}, "New here?"),
-          el(
-            "p",
-            { style: { color: "var(--color-text)", marginTop: "4px" } },
-            "Learn how sound works and what determines an object's frequency."
-          ),
-          el(
-            "button",
-            {
-              className: "btn btn-primary mt-8",
-              onclick: () => navigate("tutorial"),
-            },
-            "Start Tutorial"
-          )
-        )
-      : null,
+  const hero = el("div", { className: "landing-hero" });
 
-    // Mode cards
-    el(
-      "div",
-      { className: "flex flex-col", style: { gap: "20px", marginTop: "48px" } },
+  const canvas = document.createElement("canvas");
+  canvas.className = "landing-canvas";
+  hero.appendChild(canvas);
 
-      // Daily Match
-      el(
-        "div",
-        {
-          className: "card card-interactive",
-          onclick: () => navigate("daily"),
-        },
-        el(
-          "div",
-          { className: "flex items-center gap-12" },
-          el("div", {
-            className: "btn-icon btn-primary",
-            innerHTML: icons.daily,
-            style: {
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          }),
-          el(
-            "div",
-            { style: { flex: "1" } },
-            el("h3", {}, "Daily Match"),
-            el("p", { className: "text-sm" }, "One object per day. Can you match its frequency?")
-          )
-        ),
-        streak > 0
-          ? el(
-              "div",
-              { className: "mt-8" },
-              el("span", { className: "badge badge-success" }, `${streak} day streak`)
-            )
-          : null
-      ),
+  hero.appendChild(el("h1", { className: "landing-title" }, t("landing.title")));
+  hero.appendChild(el("p", { className: "landing-subtitle" }, t("landing.subtitle")));
 
-      // Race
-      el(
-        "div",
-        {
-          className: "card card-interactive",
-          onclick: () => navigate("race"),
-        },
-        el(
-          "div",
-          { className: "flex items-center gap-12" },
-          el("div", {
-            className: "btn-icon btn-secondary",
-            innerHTML: icons.race,
-            style: {
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          }),
-          el(
-            "div",
-            { style: { flex: "1" } },
-            el("h3", {}, "Race"),
-            el("p", { className: "text-sm" }, "Match a bingo card of frequencies as fast as you can.")
-          )
-        )
-      ),
+  const buttons = el("div", { className: "landing-buttons" });
 
-      // Catalog
-      el(
-        "div",
-        {
-          className: "card card-interactive",
-          onclick: () => navigate("catalog"),
-        },
-        el(
-          "div",
-          { className: "flex items-center gap-12" },
-          el("div", {
-            className: "btn-icon btn-primary",
-            innerHTML: icons.catalog,
-            style: {
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            },
-          }),
-          el(
-            "div",
-            { style: { flex: "1" } },
-            el("h3", {}, "Sound Catalog"),
-            el("p", { className: "text-sm" }, "Browse all objects, learn the physics, practice matching.")
-          )
-        )
-      )
-    )
+  buttons.appendChild(
+    el("button", {
+      className: "btn btn-secondary btn-large",
+      onclick: () => {
+        document.getElementById("education").scrollIntoView({ behavior: "smooth" });
+      },
+    }, t("landing.learnBtn"))
   );
 
+  buttons.appendChild(
+    el("button", {
+      className: "btn btn-primary btn-large",
+      onclick: () => navigate("play"),
+    }, t("landing.playBtn"))
+  );
+
+  hero.appendChild(buttons);
+  screen.appendChild(hero);
+
+  // ── Education section (below fold) ──
+
+  const edu = el("div", { className: "landing-education", id: "education" });
+
+  // Section heading
+  edu.appendChild(el("h2", { className: "landing-edu-heading" }, t("landing.edu.heading")));
+
+  // ── 1. What is Sound? ──
+  const soundVisual = createSoundVisual();
+  animations.push(soundVisual);
+
+  const soundCard = el("div", { className: "card mb-16" },
+    el("h2", { className: "mb-8" }, t("landing.edu.whatIsSound")),
+    el("p", {}, t("landing.edu.whatIsSoundP1")),
+    el("p", { className: "mt-8" }, t("landing.edu.whatIsSoundP2")),
+    el("p", { className: "mt-8" }, t("landing.edu.whatIsSoundP3")),
+    el("div", { className: "section-anim-wrap" }, soundVisual.element)
+  );
+  edu.appendChild(soundCard);
+
+  // ── 2. What Determines Frequency? ──
+  const freqExplorer = createFrequencyExplorer();
+  animations.push(freqExplorer);
+
+  const freqCard = el("div", { className: "card mb-16" },
+    el("h2", { className: "mb-8" }, t("landing.edu.whatDetermines")),
+    el("p", {}, t("landing.edu.whatDeterminesIntro")),
+    el("div", { className: "mt-8" },
+      el("h3", {}, t("landing.edu.stiffnessTitle")),
+      el("p", {}, t("landing.edu.stiffnessBody"))
+    ),
+    el("div", { className: "mt-8" },
+      el("h3", {}, t("landing.edu.densityTitle")),
+      el("p", {}, t("landing.edu.densityBody"))
+    ),
+    el("div", { className: "mt-8" },
+      el("h3", {}, t("landing.edu.geometryTitle")),
+      el("p", {}, t("landing.edu.geometryBody"))
+    ),
+    freqExplorer.element
+  );
+  edu.appendChild(freqCard);
+
+  // ── 3. The Formula ──
+  const formulaVisual = createFormulaVisual();
+  animations.push(formulaVisual);
+
+  const formulaCard = el("div", { className: "card mb-16" },
+    el("h2", { className: "mb-8" }, t("landing.edu.formulaTitle")),
+    el("div", { className: "formula-block" },
+      el("div", { className: "formula-text-fit" },
+        "f = (\u03B2L)\u00B2 \u00D7 h / (4\u03C0\u221A3 \u00D7 L\u00B2) \u00D7 \u221A(E / \u03C1)"
+      )
+    ),
+    el("p", { className: "mt-8" }, t("landing.edu.formulaIntro")),
+    el("div", { className: "mt-8" },
+      el("p", {}, t("landing.edu.formulaBetaL")),
+      el("p", {}, t("landing.edu.formulaH")),
+      el("p", {}, t("landing.edu.formulaL")),
+      el("p", {}, t("landing.edu.formulaE")),
+      el("p", {}, t("landing.edu.formulaRho"))
+    ),
+    el("p", { className: "mt-8" }, t("landing.edu.formulaNote")),
+    el("div", { className: "section-anim-wrap" }, formulaVisual.element)
+  );
+  edu.appendChild(formulaCard);
+
+  // ── 4. How to Play ──
+  const tunerVisual = createTunerVisual();
+  animations.push(tunerVisual);
+
+  const tunerCard = el("div", { className: "card mb-16" },
+    el("h2", { className: "mb-8" }, t("landing.edu.howToPlay")),
+    el("p", {}, t("landing.edu.step1")),
+    el("p", { className: "mt-8" }, t("landing.edu.step2")),
+    el("p", { className: "mt-8" }, t("landing.edu.step3")),
+    el("p", { className: "mt-8" }, t("landing.edu.step4")),
+    el("p", { className: "mt-8" }, t("landing.edu.step5")),
+    el("div", { className: "section-anim-wrap" }, tunerVisual.element)
+  );
+  edu.appendChild(tunerCard);
+
+  // Bottom CTA
+  edu.appendChild(
+    el("button", {
+      className: "btn btn-primary btn-large",
+      style: { width: "100%" },
+      onclick: () => navigate("play"),
+    }, t("landing.edu.readyBtn"))
+  );
+
+  screen.appendChild(edu);
   container.appendChild(screen);
+
+  // Remove #app constraints for full-bleed landing
+  container.classList.add("landing-active");
+
+  // Start hero wave immediately (always visible)
+  const wave = new WaveAnimation(canvas);
+  wave.start();
+
+  // Start section animations only when scrolled into view
+  const pairs = [
+    { anim: soundVisual,   elem: soundCard   },
+    { anim: freqExplorer,  elem: freqCard    },
+    { anim: formulaVisual, elem: formulaCard },
+    { anim: tunerVisual,   elem: tunerCard   },
+  ];
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const pair = pairs.find(p => p.elem === entry.target);
+      if (!pair) continue;
+      if (entry.isIntersecting) {
+        pair.anim.start();
+      } else {
+        pair.anim.destroy();
+      }
+    }
+  }, { threshold: 0.1 });
+
+  for (const pair of pairs) observer.observe(pair.elem);
+
+  // Cleanup
+  return () => {
+    observer.disconnect();
+    wave.destroy();
+    for (const anim of animations) anim.destroy();
+    container.classList.remove("landing-active");
+  };
 }

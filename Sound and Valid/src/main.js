@@ -8,7 +8,7 @@ import { initLocale } from "./utils/i18n.js";
 initLocale();
 
 // Register routes with lazy-loaded screen modules
-registerRoute("", () => import("./screens/landing.js"));
+registerRoute("", () => import("./screens/home.js"));
 registerRoute("play", () => import("./screens/play.js"));
 registerRoute("daily", () => import("./screens/daily-match.js"));
 registerRoute("race", () => import("./screens/race.js"));

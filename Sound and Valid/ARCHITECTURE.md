@@ -17,8 +17,8 @@ src/
 ├── style.css                All styles. Single file, CSS custom properties for theming.
 │
 ├── screens/                 One file per route. Each exports render(container) → cleanup fn.
-│   ├── landing.js           Marketing/education page. The long scrollable intro.
-│   ├── home.js              Mode select screen (Daily, Race, Catalog cards).
+│   ├── home.js              Home screen. Hero wave, quick-play buttons, scrollable physics education.
+│   ├── play.js              Mode select hub (Daily, Race, Catalog cards).
 │   ├── play.js              Second mode-select hub (reached from bottom nav).
 │   ├── daily-match.js       Daily challenge. One object per day, mic-match gameplay.
 │   ├── race.js              Bingo-card speed mode. Match as many as possible.
@@ -56,7 +56,7 @@ src/
 
 `router.js` is a minimal hash router. `location.hash` is the route key.
 
-- `""` (no hash) → `landing.js`
+- `""` (no hash) → `home.js`
 - `#play` → `play.js`
 - `#daily` → `daily-match.js`
 - `#race` → `race.js`
