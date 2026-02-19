@@ -110,6 +110,7 @@ export function render(container) {
       el("p", {}, t("landing.edu.formulaE")),
       el("p", {}, t("landing.edu.formulaRho"))
     ),
+    el("div", { className: "formula-scope-note mt-16" }, t("landing.edu.formulaScope")),
     el("p", { className: "mt-8" }, t("landing.edu.formulaNote")),
     el("div", { className: "section-anim-wrap" }, formulaVisual.element)
   );

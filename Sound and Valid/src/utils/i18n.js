@@ -51,6 +51,8 @@ const translations = {
         formulaL: "\u2022 L \u2014 length of the bar",
         formulaE: "\u2022 E \u2014 stiffness of the material",
         formulaRho: "\u2022 \u03C1 \u2014 density of the material",
+        formulaScope:
+          "This formula applies only to solid, uniform rectangular bars where length is much greater than thickness. It does not describe strings (governed by tension), hollow or tubular objects, arched bars like real marimba keys, plates, or acoustic cavities like bottles. Every object in this app was chosen specifically because it fits these constraints.",
         formulaNote:
           "Every object in this app has a frequency computed from this formula with real material data.",
         howToPlay: "How to Play",

@@ -501,6 +501,17 @@ p {
   text-align: right;
 }
 
+/* ─── Formula Scope Note ─── */
+.formula-scope-note {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  padding: 10px 14px;
+  border-left: 3px solid var(--color-warning);
+  background: var(--color-warning-light);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--color-text);
+}
+
 /* ─── Formula Display ─── */
 .formula-block {
   background: var(--color-surface);
