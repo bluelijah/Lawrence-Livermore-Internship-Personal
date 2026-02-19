@@ -13,7 +13,7 @@ export function render(container) {
     // Header
     el(
       "div",
-      { className: "screen-header text-center" },
+      { className: "screen-header home-header text-center" },
       el("h1", {}, "Sound and Valid"),
       el("p", {}, "Learn how materials shape sound")
     ),
@@ -49,7 +49,7 @@ export function render(container) {
     // Mode cards
     el(
       "div",
-      { className: "flex flex-col gap-12 mt-24" },
+      { className: "flex flex-col", style: { gap: "20px", marginTop: "48px" } },
 
       // Daily Match
       el(
