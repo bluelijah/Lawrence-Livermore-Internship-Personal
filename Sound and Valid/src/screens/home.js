@@ -14,7 +14,7 @@ export function render(container) {
     el(
       "div",
       { className: "screen-header home-header text-center" },
-      el("h1", { style: { fontSize: "0.5rem" } }, "Sound and Valid"),
+      el("h1", {}, "Sound and Valid"),
       el("p", {}, "Learn how materials shape sound")
     ),
 

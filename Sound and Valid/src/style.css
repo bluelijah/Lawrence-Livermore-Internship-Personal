@@ -206,14 +206,6 @@ p {
   margin-bottom: 4px;
 }
 
-.home-header {
-  margin-bottom: 48px;
-}
-
-
-.home-header p {
-  font-size: 1.05rem;
-}
 
 @keyframes fadeIn {
   from {
@@ -768,11 +760,11 @@ p {
 }
 
 .landing-title {
-  font-size: 2.2rem;
+  font-size: 3rem;
   font-weight: 800;
   position: relative;
   z-index: 1;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
   letter-spacing: -0.02em;
 }
 
@@ -781,7 +773,7 @@ p {
   position: relative;
   z-index: 1;
   max-width: 320px;
-  margin-bottom: 40px;
+  margin-bottom: 56px;
   color: var(--color-text-secondary);
   line-height: 1.5;
 }
@@ -810,7 +802,7 @@ p {
 .landing-buttons {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
   max-width: 320px;
   position: relative;
