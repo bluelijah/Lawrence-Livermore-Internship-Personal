@@ -16,7 +16,11 @@ export class FrequencyMeter {
     this.clarity = 0;
     this.matchProgress = 0; // 0 to 1, fills up while in tolerance
     this.matched = false;
+    this.matchType = "exact"; // "exact" | "harmonic"
     this._rafId = null;
+    this._drainStart = null;
+    this._drainDuration = 0;
+    this._drainFrom = 0;
 
     this._createDOM();
   }
@@ -66,6 +70,11 @@ export class FrequencyMeter {
     this.targetHz = hz;
     this.matchProgress = 0;
     this.matched = false;
+    this.matchType = "exact";
+  }
+
+  setMatchType(type) {
+    this.matchType = type;
   }
 
   update(detectedHz, clarity) {
@@ -79,6 +88,12 @@ export class FrequencyMeter {
 
   setMatched(matched) {
     this.matched = matched;
+  }
+
+  startDrain(durationMs) {
+    this._drainFrom = this.matchProgress;
+    this._drainDuration = durationMs;
+    this._drainStart = performance.now();
   }
 
   startRendering() {
@@ -189,8 +204,20 @@ export class FrequencyMeter {
       ctx.fillText(`${sign}${offset.toFixed(1)}%`, needleX, scaleY - 26);
     }
 
-    // Match progress bar at bottom
-    if (this.matchProgress > 0 && !this.matched) {
+    // Tick drain animation
+    let drainProgress = 0;
+    if (this._drainStart !== null) {
+      const elapsed = performance.now() - this._drainStart;
+      const t = Math.min(elapsed / this._drainDuration, 1);
+      drainProgress = this._drainFrom * (1 - t);
+      if (t >= 1) this._drainStart = null;
+    }
+
+    const barColor = this.matchType === "harmonic" ? "#d97706" : "#16a34a";
+
+    // Match progress bar at bottom (normal fill or drain)
+    const barProgress = this._drainStart !== null ? drainProgress : this.matchProgress;
+    if (barProgress > 0 && !this.matched) {
       const barY = h - 20;
       const barWidth = w - 40;
 
@@ -199,9 +226,9 @@ export class FrequencyMeter {
       ctx.roundRect(20, barY, barWidth, 8, 4);
       ctx.fill();
 
-      ctx.fillStyle = "#16a34a";
+      ctx.fillStyle = barColor;
       ctx.beginPath();
-      ctx.roundRect(20, barY, barWidth * this.matchProgress, 8, 4);
+      ctx.roundRect(20, barY, barWidth * barProgress, 8, 4);
       ctx.fill();
 
       ctx.fillStyle = "#666";
@@ -210,12 +237,28 @@ export class FrequencyMeter {
       ctx.fillText("Hold it...", w / 2, barY - 4);
     }
 
-    // Matched celebration
+    // Draining after a match
+    if (this.matched && this._drainStart !== null) {
+      const barY = h - 20;
+      const barWidth = w - 40;
+
+      ctx.fillStyle = "#e5e7eb";
+      ctx.beginPath();
+      ctx.roundRect(20, barY, barWidth, 8, 4);
+      ctx.fill();
+
+      ctx.fillStyle = barColor;
+      ctx.beginPath();
+      ctx.roundRect(20, barY, barWidth * drainProgress, 8, 4);
+      ctx.fill();
+    }
+
+    // Matched text
     if (this.matched) {
-      ctx.fillStyle = "#16a34a";
+      ctx.fillStyle = barColor;
       ctx.font = "bold 18px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("MATCHED!", w / 2, h - 16);
+      ctx.fillText(this.matchType === "harmonic" ? "HARMONIC!" : "MATCHED!", w / 2, h - 16);
     }
   }
 
@@ -233,8 +276,13 @@ export class FrequencyMeter {
 
     // Update status
     if (this.matched) {
-      this.statusEl.textContent = "Frequency matched!";
-      this.statusEl.className = "match-status matched";
+      if (this.matchType === "harmonic") {
+        this.statusEl.textContent = "Harmonic match!";
+        this.statusEl.className = "match-status harmonic-matched";
+      } else {
+        this.statusEl.textContent = "Frequency matched!";
+        this.statusEl.className = "match-status matched";
+      }
     } else if (this.detectedHz < 0 || this.clarity < 0.5) {
       this.statusEl.textContent = "Listening... make a sound";
       this.statusEl.className = "match-status";

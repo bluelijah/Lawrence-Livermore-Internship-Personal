@@ -12,10 +12,23 @@ const COLORS = [
   "#ffffff",
 ];
 
+const HARMONIC_COLORS = [
+  "#d97706", "#f59e0b", "#fbbf24",
+  "#b45309", "#fde68a", "#ffffff",
+];
+
 const DURATION    = 2200; // ms total
 const SPAWN_UNTIL = 0.5;  // fraction of DURATION to keep spawning
 
+export function celebrateHarmonic() {
+  _run(HARMONIC_COLORS, 15, 3);
+}
+
 export function celebrate() {
+  _run(COLORS, 35, 7);
+}
+
+function _run(colors, initialBurst, batchSize) {
   const canvas = document.createElement("canvas");
   canvas.style.cssText =
     "position:fixed;top:0;left:0;width:100%;height:100%;" +
@@ -40,7 +53,7 @@ export function celebrate() {
         vx:   (Math.random() - 0.5) * 3,
         vy:   1.5 + Math.random() * 4,
         size: 5 + Math.random() * 8,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        color: colors[Math.floor(Math.random() * colors.length)],
         rect: Math.random() > 0.4,
         rot:  Math.random() * Math.PI * 2,
         rotV: (Math.random() - 0.5) * 0.25,
@@ -49,7 +62,7 @@ export function celebrate() {
     }
   }
 
-  spawnBatch(35); // initial burst
+  spawnBatch(initialBurst);
 
   const start = performance.now();
   let lastSpawn = 0;
@@ -63,7 +76,7 @@ export function celebrate() {
 
     // Keep spawning small batches in the first half
     if (elapsed < DURATION * SPAWN_UNTIL && elapsed - lastSpawn > 110) {
-      spawnBatch(7);
+      spawnBatch(batchSize);
       lastSpawn = elapsed;
     }
 

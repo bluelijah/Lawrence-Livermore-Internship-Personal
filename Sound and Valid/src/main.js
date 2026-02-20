@@ -3,9 +3,13 @@ import { registerRoute, initRouter } from "./router.js";
 import { icons } from "./ui/components.js";
 import { getCurrentPath } from "./router.js";
 import { initLocale } from "./utils/i18n.js";
+import { initDB } from "./utils/db.js";
 
 // Initialize i18n before any rendering
 initLocale();
+
+// Initialize SQLite DB before any rendering
+await initDB();
 
 // Register routes with lazy-loaded screen modules
 registerRoute("", () => import("./screens/home.js"));
@@ -56,8 +60,8 @@ function createBottomNav() {
   updateActive();
 }
 
-// Register service worker for PWA
-if ("serviceWorker" in navigator) {
+// Register service worker for PWA (production only — avoids stale-cache issues in dev)
+if ("serviceWorker" in navigator && import.meta.env.PROD) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js").catch(() => {});
   });

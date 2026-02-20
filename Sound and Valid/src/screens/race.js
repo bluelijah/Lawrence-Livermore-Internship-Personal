@@ -6,12 +6,21 @@ import { TonePlayer } from "../audio/tone-player.js";
 import { PitchDetector } from "../audio/pitch-detector.js";
 import { FrequencyMeter } from "../ui/frequency-meter.js";
 import { shuffle, formatTime } from "../utils/helpers.js";
-import { getRaceBest, saveRaceResult } from "../utils/storage.js";
-import { celebrate } from "../ui/celebration.js";
+import { getRaceBest, saveRaceResult, getRaceHistory } from "../utils/storage.js";
+import { recordListen, recordMatch } from "../utils/db.js";
+import { celebrate, celebrateHarmonic } from "../ui/celebration.js";
 
 const TOLERANCE = 0.05;
 const MATCH_DURATION = 0.75;
 const GRACE_MS = 200;
+
+function getMatchType(ratio) {
+  if (Math.abs(ratio - 1)    < TOLERANCE) return "exact";
+  if (Math.abs(ratio - 0.5)  < TOLERANCE) return "harmonic";
+  if (Math.abs(ratio - 0.25) < TOLERANCE) return "harmonic";
+  if (Math.abs(ratio - 2)    < TOLERANCE) return "harmonic";
+  return null;
+}
 
 export function render(container) {
   let gridSize = null;
@@ -68,15 +77,39 @@ export function render(container) {
 
   sizeSelect.appendChild(sizeButtons);
 
-  // Show personal bests
-  const best2 = getRaceBest("2x2");
-  const best3 = getRaceBest("3x3");
-  if (best2 || best3) {
-    const bests = el("div", { className: "mt-16 text-center text-sm" });
-    if (best2) bests.appendChild(el("p", {}, `2x2 best: ${formatTime(best2, true)}`));
-    if (best3) bests.appendChild(el("p", {}, `3x3 best: ${formatTime(best3, true)}`));
-    sizeSelect.appendChild(bests);
+  // Show personal bests + recent history
+  function buildStatsBlock(size) {
+    const best    = getRaceBest(size);
+    const history = getRaceHistory(size, 3);
+    if (!best && !history.length) return null;
+
+    const block = el("div", { className: "race-stats-block" });
+    if (best) {
+      block.appendChild(
+        el("div", { className: "race-best-line" },
+          el("span", { className: "race-best-label" }, `${size} best`),
+          el("span", { className: "race-best-time" }, formatTime(best, true))
+        )
+      );
+    }
+    if (history.length) {
+      const histList = el("div", { className: "race-history" });
+      for (const entry of history) {
+        histList.appendChild(
+          el("span", { className: "race-history-entry" }, formatTime(entry.time_seconds, true))
+        );
+      }
+      block.appendChild(histList);
+    }
+    return block;
   }
+
+  const statsBlock = el("div", { className: "mt-16" });
+  const b2 = buildStatsBlock("2x2");
+  const b3 = buildStatsBlock("3x3");
+  if (b2) statsBlock.appendChild(b2);
+  if (b3) statsBlock.appendChild(b3);
+  if (b2 || b3) sizeSelect.appendChild(statsBlock);
 
   screen.appendChild(sizeSelect);
 
@@ -147,6 +180,7 @@ export function render(container) {
         const engine = AudioEngine.getInstance();
         await engine.init();
         if (!tonePlayer) tonePlayer = new TonePlayer(engine.getAudioContext());
+        if (activeIndex >= 0) recordListen(raceObjects[activeIndex].id);
         tonePlayer.play(raceObjects[activeIndex].frequency, 1.5);
       },
     }, "Listen");
@@ -228,55 +262,45 @@ export function render(container) {
         meter.update(frequency, clarity);
 
         const target = raceObjects[activeIndex].frequency;
+        const ratio = frequency > 0 ? frequency / target : 0;
+        const type = (frequency > 0 && clarity > 0.8) ? getMatchType(ratio) : null;
 
-        if (frequency > 0 && clarity > 0.8) {
-          const ratio = frequency / target;
-          if (Math.abs(ratio - 1) < TOLERANCE) {
-            lostAt = null;
-            if (!matchStart) matchStart = performance.now();
-            const elapsed = (performance.now() - matchStart) / 1000;
-            meter.setMatchProgress(elapsed / MATCH_DURATION);
+        if (type) {
+          lostAt = null;
+          if (!matchStart) {
+            matchStart = performance.now();
+            meter.setMatchType(type);
+          }
+          const elapsed = (performance.now() - matchStart) / 1000;
+          meter.setMatchProgress(elapsed / MATCH_DURATION);
 
-            if (elapsed >= MATCH_DURATION) {
-              // Matched this cell!
-              matched.add(activeIndex);
-              const cell = grid.querySelector(`[data-index="${activeIndex}"]`);
-              if (cell) {
-                cell.classList.remove("active");
-                cell.classList.add("matched");
-              }
-
-              celebrate();
-              meter.setMatched(true);
-              matchStart = null; lostAt = null;
-
-              // Check if all matched
-              const count = gridSize === "2x2" ? 4 : 9;
-              if (matched.size >= count) {
-                onRaceComplete(timerEl, matchBtnEl, meterArea);
-              } else {
-                // Auto-advance to next unmatched cell
-                setTimeout(() => {
-                  meter.setMatched(false);
-                  meter.setMatchProgress(0);
-                  for (let i = 0; i < raceObjects.length; i++) {
-                    if (!matched.has(i)) {
-                      selectCell(i);
-                      break;
-                    }
-                  }
-                }, 500);
-              }
+          if (elapsed >= MATCH_DURATION) {
+            const resolvedType = meter.matchType;
+            matched.add(activeIndex);
+            const cell = grid.querySelector(`[data-index="${activeIndex}"]`);
+            if (cell) {
+              cell.classList.remove("active");
+              cell.classList.add(resolvedType === "harmonic" ? "harmonic-matched-cell" : "matched");
             }
-          } else {
-            if (matchStart !== null) {
-              if (lostAt === null) lostAt = performance.now();
-              if (performance.now() - lostAt >= GRACE_MS) {
-                matchStart = null; lostAt = null;
-                meter.setMatchProgress(0);
-              }
+
+            resolvedType === "harmonic" ? celebrateHarmonic() : celebrate();
+            recordMatch(raceObjects[activeIndex].id, resolvedType);
+            meter.setMatched(true);
+            meter.startDrain(1500);
+            matchStart = null; lostAt = null;
+
+            const count = gridSize === "2x2" ? 4 : 9;
+            if (matched.size >= count) {
+              onRaceComplete(timerEl, matchBtnEl, meterArea);
             } else {
-              meter.setMatchProgress(0);
+              setTimeout(() => {
+                meter.setMatched(false);
+                meter.setMatchProgress(0);
+                meter.setMatchType("exact");
+                for (let i = 0; i < raceObjects.length; i++) {
+                  if (!matched.has(i)) { selectCell(i); break; }
+                }
+              }, 500);
             }
           }
         } else {
@@ -285,6 +309,7 @@ export function render(container) {
             if (performance.now() - lostAt >= GRACE_MS) {
               matchStart = null; lostAt = null;
               meter.setMatchProgress(0);
+              meter.setMatchType("exact");
             }
           } else {
             meter.setMatchProgress(0);
@@ -317,7 +342,7 @@ export function render(container) {
 
     stopListeningRace(matchBtnEl);
 
-    const isNewBest = saveRaceResult(gridSize, totalTime);
+    const { isNewBest } = saveRaceResult(gridSize, totalTime);
 
     meterArea.innerHTML = "";
     meterArea.appendChild(

@@ -8,11 +8,20 @@ import { TonePlayer } from "../audio/tone-player.js";
 import { PitchDetector } from "../audio/pitch-detector.js";
 import { FrequencyMeter } from "../ui/frequency-meter.js";
 import { formatFreq, formatDimension } from "../utils/helpers.js";
-import { celebrate } from "../ui/celebration.js";
+import { celebrate, celebrateHarmonic } from "../ui/celebration.js";
+import { recordListen, recordMatch } from "../utils/db.js";
 
 const TOLERANCE = 0.05;
 const MATCH_DURATION = 0.75;
 const GRACE_MS = 200;
+
+function getMatchType(ratio) {
+  if (Math.abs(ratio - 1)    < TOLERANCE) return "exact";
+  if (Math.abs(ratio - 0.5)  < TOLERANCE) return "harmonic";
+  if (Math.abs(ratio - 0.25) < TOLERANCE) return "harmonic";
+  if (Math.abs(ratio - 2)    < TOLERANCE) return "harmonic";
+  return null;
+}
 
 /** Returns display unit info for a dimension value in meters. */
 function dimUnit(meters) {
@@ -112,6 +121,7 @@ export function render(container, objectId) {
         { length: currentLength, width: obj.dimensions.width, thickness: currentThickness },
         obj.boundary
       );
+      recordListen(obj.id);
       listenBtn.disabled = true;
       matchBtn.disabled = true;
       tonePlayer.play(freq, 2);
@@ -327,39 +337,36 @@ export function render(container, objectId) {
     pitchDetector.start((frequency, clarity) => {
       meter.update(frequency, clarity);
 
-      if (frequency > 0 && clarity > 0.8) {
-        const ratio = frequency / obj.frequency;
-        if (Math.abs(ratio - 1) < TOLERANCE) {
-          lostAt = null;
-          if (!matchStart) matchStart = performance.now();
-          const elapsed = (performance.now() - matchStart) / 1000;
-          meter.setMatchProgress(elapsed / MATCH_DURATION);
-          if (elapsed >= MATCH_DURATION) {
-            if (pitchDetector) { pitchDetector.stop(); pitchDetector = null; }
-            AudioEngine.getInstance().stopMicrophone();
-            isListening = false;
-            matchBtn.textContent = "Practice Match";
-            matchBtn.className = "btn btn-primary";
-            listenBtn.disabled = false;
-            matchStart = null; lostAt = null;
-            celebrate();
-            meter.setMatched(true);
-            setTimeout(() => {
-              meter.setMatched(false);
-              meter.setMatchProgress(0);
-              meter.stopRendering();
-            }, 2000);
-          }
-        } else {
-          if (matchStart !== null) {
-            if (lostAt === null) lostAt = performance.now();
-            if (performance.now() - lostAt >= GRACE_MS) {
-              matchStart = null; lostAt = null;
-              meter.setMatchProgress(0);
-            }
-          } else {
+      const ratio = frequency > 0 ? frequency / obj.frequency : 0;
+      const type = (frequency > 0 && clarity > 0.8) ? getMatchType(ratio) : null;
+
+      if (type) {
+        lostAt = null;
+        if (!matchStart) {
+          matchStart = performance.now();
+          meter.setMatchType(type);
+        }
+        const elapsed = (performance.now() - matchStart) / 1000;
+        meter.setMatchProgress(elapsed / MATCH_DURATION);
+        if (elapsed >= MATCH_DURATION) {
+          const resolvedType = meter.matchType;
+          if (pitchDetector) { pitchDetector.stop(); pitchDetector = null; }
+          AudioEngine.getInstance().stopMicrophone();
+          isListening = false;
+          matchBtn.textContent = "Practice Match";
+          matchBtn.className = "btn btn-primary";
+          listenBtn.disabled = false;
+          matchStart = null; lostAt = null;
+          resolvedType === "harmonic" ? celebrateHarmonic() : celebrate();
+          recordMatch(obj.id, resolvedType);
+          meter.setMatched(true);
+          meter.startDrain(1500);
+          setTimeout(() => {
+            meter.setMatched(false);
             meter.setMatchProgress(0);
-          }
+            meter.setMatchType("exact");
+            meter.stopRendering();
+          }, 2000);
         }
       } else {
         if (matchStart !== null) {
@@ -367,6 +374,7 @@ export function render(container, objectId) {
           if (performance.now() - lostAt >= GRACE_MS) {
             matchStart = null; lostAt = null;
             meter.setMatchProgress(0);
+            meter.setMatchType("exact");
           }
         } else {
           meter.setMatchProgress(0);
