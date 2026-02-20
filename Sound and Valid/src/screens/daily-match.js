@@ -10,7 +10,8 @@ import { getDailyObjectIndex, getTodayDateStr } from "../utils/daily-seed.js";
 import { getDailyState, saveDailyState, getDailyStreak } from "../utils/storage.js";
 
 const TOLERANCE = 0.05; // +/- 5%
-const MATCH_DURATION = 1.5; // seconds to hold
+const MATCH_DURATION = 0.75; // seconds to hold
+const GRACE_MS = 200;        // ms of bad signal before resetting timer
 const MAX_ATTEMPTS = 5;
 
 export function render(container) {
@@ -34,6 +35,7 @@ export function render(container) {
   let pitchDetector = null;
   let meter = null;
   let matchStart = null;
+  let lostAt = null;
   let isListening = false;
 
   const screen = el("div", { className: "screen" });
@@ -220,10 +222,8 @@ export function render(container) {
         }
 
         if (Math.abs(ratio - 1) < TOLERANCE) {
-          // Within tolerance
-          if (!matchStart) {
-            matchStart = performance.now();
-          }
+          lostAt = null;
+          if (!matchStart) matchStart = performance.now();
           const elapsed = (performance.now() - matchStart) / 1000;
           meter.setMatchProgress(elapsed / MATCH_DURATION);
 
@@ -231,12 +231,26 @@ export function render(container) {
             onMatch();
           }
         } else {
-          matchStart = null;
-          meter.setMatchProgress(0);
+          if (matchStart !== null) {
+            if (lostAt === null) lostAt = performance.now();
+            if (performance.now() - lostAt >= GRACE_MS) {
+              matchStart = null; lostAt = null;
+              meter.setMatchProgress(0);
+            }
+          } else {
+            meter.setMatchProgress(0);
+          }
         }
       } else {
-        matchStart = null;
-        meter.setMatchProgress(0);
+        if (matchStart !== null) {
+          if (lostAt === null) lostAt = performance.now();
+          if (performance.now() - lostAt >= GRACE_MS) {
+            matchStart = null; lostAt = null;
+            meter.setMatchProgress(0);
+          }
+        } else {
+          meter.setMatchProgress(0);
+        }
       }
     });
   }

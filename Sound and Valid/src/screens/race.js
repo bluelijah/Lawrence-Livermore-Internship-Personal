@@ -9,7 +9,8 @@ import { shuffle, formatTime } from "../utils/helpers.js";
 import { getRaceBest, saveRaceResult } from "../utils/storage.js";
 
 const TOLERANCE = 0.05;
-const MATCH_DURATION = 1.5;
+const MATCH_DURATION = 0.75;
+const GRACE_MS = 200;
 
 export function render(container) {
   let gridSize = null;
@@ -22,6 +23,7 @@ export function render(container) {
   let pitchDetector = null;
   let meter = null;
   let matchStart = null;
+  let lostAt = null;
   let isListening = false;
   let raceFinished = false;
 
@@ -229,6 +231,7 @@ export function render(container) {
         if (frequency > 0 && clarity > 0.8) {
           const ratio = frequency / target;
           if (Math.abs(ratio - 1) < TOLERANCE) {
+            lostAt = null;
             if (!matchStart) matchStart = performance.now();
             const elapsed = (performance.now() - matchStart) / 1000;
             meter.setMatchProgress(elapsed / MATCH_DURATION);
@@ -243,7 +246,7 @@ export function render(container) {
               }
 
               meter.setMatched(true);
-              matchStart = null;
+              matchStart = null; lostAt = null;
 
               // Check if all matched
               const count = gridSize === "2x2" ? 4 : 9;
@@ -264,12 +267,26 @@ export function render(container) {
               }
             }
           } else {
-            matchStart = null;
-            meter.setMatchProgress(0);
+            if (matchStart !== null) {
+              if (lostAt === null) lostAt = performance.now();
+              if (performance.now() - lostAt >= GRACE_MS) {
+                matchStart = null; lostAt = null;
+                meter.setMatchProgress(0);
+              }
+            } else {
+              meter.setMatchProgress(0);
+            }
           }
         } else {
-          matchStart = null;
-          meter.setMatchProgress(0);
+          if (matchStart !== null) {
+            if (lostAt === null) lostAt = performance.now();
+            if (performance.now() - lostAt >= GRACE_MS) {
+              matchStart = null; lostAt = null;
+              meter.setMatchProgress(0);
+            }
+          } else {
+            meter.setMatchProgress(0);
+          }
         }
       });
     }
