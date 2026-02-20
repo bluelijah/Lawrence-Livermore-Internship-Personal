@@ -1,8 +1,9 @@
 /**
- * Celebration particle burst for a successful frequency match.
+ * Celebration confetti rain for a successful frequency match.
  *
- * Creates a fixed full-screen canvas overlay, animates for ~1.6s,
- * then self-removes. No cleanup needed by the caller.
+ * Particles spawn across the top of the screen and fall with gravity,
+ * with new batches spawning for the first half of the animation.
+ * Self-removes after ~2.2s. No cleanup needed by the caller.
  */
 
 const COLORS = [
@@ -11,7 +12,8 @@ const COLORS = [
   "#ffffff",
 ];
 
-const DURATION = 1600; // ms
+const DURATION    = 2200; // ms total
+const SPAWN_UNTIL = 0.5;  // fraction of DURATION to keep spawning
 
 export function celebrate() {
   const canvas = document.createElement("canvas");
@@ -24,35 +26,33 @@ export function celebrate() {
   const dpr = window.devicePixelRatio || 1;
   const W = window.innerWidth;
   const H = window.innerHeight;
-  canvas.width = Math.round(W * dpr);
+  canvas.width  = Math.round(W * dpr);
   canvas.height = Math.round(H * dpr);
   ctx.scale(dpr, dpr);
 
-  // Burst origin: horizontally centered, ~40% down (where the meter sits)
-  const ox = W / 2;
-  const oy = H * 0.4;
+  const particles = [];
 
-  // Particles: mix of small rectangles and circles
-  const particles = Array.from({ length: 60 }, () => {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = 3 + Math.random() * 11;
-    return {
-      x: ox,
-      y: oy,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed - 4, // bias slightly upward
-      size: 5 + Math.random() * 7,
-      color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      rect: Math.random() > 0.4,
-      rot: Math.random() * Math.PI * 2,
-      rotV: (Math.random() - 0.5) * 0.35,
-    };
-  });
+  function spawnBatch(count) {
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x:    Math.random() * W,
+        y:    -10 - Math.random() * 30,
+        vx:   (Math.random() - 0.5) * 3,
+        vy:   1.5 + Math.random() * 4,
+        size: 5 + Math.random() * 8,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        rect: Math.random() > 0.4,
+        rot:  Math.random() * Math.PI * 2,
+        rotV: (Math.random() - 0.5) * 0.25,
+        alpha: 1,
+      });
+    }
+  }
 
-  // Expanding rings (staggered)
-  const rings = [0, 100, 200].map((delay) => ({ delay, maxR: 180 }));
+  spawnBatch(35); // initial burst
 
   const start = performance.now();
+  let lastSpawn = 0;
 
   function draw(now) {
     const elapsed = now - start;
@@ -61,35 +61,32 @@ export function celebrate() {
       return;
     }
 
-    ctx.clearRect(0, 0, W, H);
-    const progress = elapsed / DURATION;
-
-    // Rings
-    for (const ring of rings) {
-      if (elapsed < ring.delay) continue;
-      const t = (elapsed - ring.delay) / (DURATION * 0.65);
-      if (t > 1) continue;
-      const r = t * ring.maxR;
-      const alpha = (1 - t) * 0.55;
-      ctx.beginPath();
-      ctx.arc(ox, oy, r, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(61, 168, 212, ${alpha})`;
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
+    // Keep spawning small batches in the first half
+    if (elapsed < DURATION * SPAWN_UNTIL && elapsed - lastSpawn > 110) {
+      spawnBatch(7);
+      lastSpawn = elapsed;
     }
 
-    // Particles
+    ctx.clearRect(0, 0, W, H);
+
+    const fadeStart = DURATION * 0.65;
+
     for (const p of particles) {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.28; // gravity
-      p.vx *= 0.985; // air resistance
+      p.x   += p.vx;
+      p.y   += p.vy;
+      p.vy  += 0.12;                          // gentle gravity
+      p.vx  += (Math.random() - 0.5) * 0.08; // slight air drift
       p.rot += p.rotV;
-      const alpha = Math.max(0, 1 - progress * 1.3);
+
+      if (elapsed > fadeStart) {
+        p.alpha = Math.max(0, 1 - (elapsed - fadeStart) / (DURATION * 0.35));
+      }
+
+      if (p.y > H + 20 || p.alpha <= 0) continue;
 
       ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle   = p.color;
       ctx.translate(p.x, p.y);
       ctx.rotate(p.rot);
       if (p.rect) {
