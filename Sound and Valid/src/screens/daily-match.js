@@ -8,6 +8,7 @@ import { PitchDetector } from "../audio/pitch-detector.js";
 import { FrequencyMeter } from "../ui/frequency-meter.js";
 import { getDailyObjectIndex, getTodayDateStr } from "../utils/daily-seed.js";
 import { getDailyState, saveDailyState, getDailyStreak } from "../utils/storage.js";
+import { celebrate } from "../ui/celebration.js";
 
 const TOLERANCE = 0.05; // +/- 5%
 const MATCH_DURATION = 0.75; // seconds to hold
@@ -276,6 +277,7 @@ export function render(container) {
     saveDailyState(dateStr, state);
 
     if (pitchDetector) pitchDetector.stop();
+    celebrate();
     if (meter) {
       meter.setMatched(true);
       meter.setMatchProgress(1);

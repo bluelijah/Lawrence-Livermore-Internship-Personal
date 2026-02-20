@@ -7,6 +7,7 @@ import { PitchDetector } from "../audio/pitch-detector.js";
 import { FrequencyMeter } from "../ui/frequency-meter.js";
 import { shuffle, formatTime } from "../utils/helpers.js";
 import { getRaceBest, saveRaceResult } from "../utils/storage.js";
+import { celebrate } from "../ui/celebration.js";
 
 const TOLERANCE = 0.05;
 const MATCH_DURATION = 0.75;
@@ -245,6 +246,7 @@ export function render(container) {
                 cell.classList.add("matched");
               }
 
+              celebrate();
               meter.setMatched(true);
               matchStart = null; lostAt = null;
 

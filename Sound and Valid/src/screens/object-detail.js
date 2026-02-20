@@ -8,6 +8,7 @@ import { TonePlayer } from "../audio/tone-player.js";
 import { PitchDetector } from "../audio/pitch-detector.js";
 import { FrequencyMeter } from "../ui/frequency-meter.js";
 import { formatFreq, formatDimension } from "../utils/helpers.js";
+import { celebrate } from "../ui/celebration.js";
 
 const TOLERANCE = 0.05;
 const MATCH_DURATION = 0.75;
@@ -334,6 +335,7 @@ export function render(container, objectId) {
           const elapsed = (performance.now() - matchStart) / 1000;
           meter.setMatchProgress(elapsed / MATCH_DURATION);
           if (elapsed >= MATCH_DURATION) {
+            celebrate();
             meter.setMatched(true);
             setTimeout(() => {
               meter.setMatched(false);
