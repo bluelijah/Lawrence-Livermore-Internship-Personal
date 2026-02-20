@@ -335,12 +335,19 @@ export function render(container, objectId) {
           const elapsed = (performance.now() - matchStart) / 1000;
           meter.setMatchProgress(elapsed / MATCH_DURATION);
           if (elapsed >= MATCH_DURATION) {
+            if (pitchDetector) { pitchDetector.stop(); pitchDetector = null; }
+            AudioEngine.getInstance().stopMicrophone();
+            isListening = false;
+            matchBtn.textContent = "Practice Match";
+            matchBtn.className = "btn btn-primary";
+            listenBtn.disabled = false;
+            matchStart = null; lostAt = null;
             celebrate();
             meter.setMatched(true);
             setTimeout(() => {
               meter.setMatched(false);
               meter.setMatchProgress(0);
-              matchStart = null; lostAt = null;
+              meter.stopRendering();
             }, 2000);
           }
         } else {

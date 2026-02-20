@@ -276,7 +276,8 @@ export function render(container) {
     state.matched = true;
     saveDailyState(dateStr, state);
 
-    if (pitchDetector) pitchDetector.stop();
+    if (pitchDetector) { pitchDetector.stop(); pitchDetector = null; }
+    AudioEngine.getInstance().stopMicrophone();
     celebrate();
     if (meter) {
       meter.setMatched(true);
