@@ -181,7 +181,13 @@ export function render(container) {
         await engine.init();
         if (!tonePlayer) tonePlayer = new TonePlayer(engine.getAudioContext());
         if (activeIndex >= 0) recordListen(raceObjects[activeIndex].id);
+        listenBtn.disabled = true;
+        matchBtnEl.disabled = true;
         tonePlayer.play(raceObjects[activeIndex].frequency, 1.5);
+        setTimeout(() => {
+          listenBtn.disabled = false;
+          if (!isListening) matchBtnEl.disabled = false;
+        }, 1500);
       },
     }, "Listen");
     controlArea.appendChild(listenBtn);
@@ -231,7 +237,7 @@ export function render(container) {
       if (raceFinished) return;
 
       if (isListening) {
-        stopListeningRace(matchBtnEl);
+        stopListeningRace(matchBtnEl, listenBtn);
         return;
       }
 
@@ -256,6 +262,7 @@ export function render(container) {
       isListening = true;
       matchBtnEl.textContent = "Stop";
       matchBtnEl.className = "btn btn-secondary";
+      listenBtn.disabled = true;
 
       pitchDetector.start((frequency, clarity) => {
         if (activeIndex < 0 || raceFinished) return;
@@ -291,9 +298,9 @@ export function render(container) {
 
             const count = gridSize === "2x2" ? 4 : 9;
             if (matched.size >= count) {
-              onRaceComplete(timerEl, matchBtnEl, meterArea);
+              onRaceComplete(timerEl, matchBtnEl, listenBtn, meterArea);
             } else {
-              stopListeningRace(matchBtnEl);
+              stopListeningRace(matchBtnEl, listenBtn);
               setTimeout(() => {
                 meter.setMatched(false);
                 meter.setMatchProgress(0);
@@ -320,7 +327,7 @@ export function render(container) {
     }
   }
 
-  function stopListeningRace(matchBtnEl) {
+  function stopListeningRace(matchBtnEl, listenBtn) {
     if (pitchDetector) {
       pitchDetector.stop();
       pitchDetector = null;
@@ -331,17 +338,19 @@ export function render(container) {
     if (matchBtnEl) {
       matchBtnEl.textContent = "Match";
       matchBtnEl.className = "btn btn-primary";
+      matchBtnEl.disabled = false;
     }
+    if (listenBtn) listenBtn.disabled = false;
     matchStart = null;
   }
 
-  function onRaceComplete(timerEl, matchBtnEl, meterArea) {
+  function onRaceComplete(timerEl, matchBtnEl, listenBtn, meterArea) {
     raceFinished = true;
     const totalTime = (performance.now() - timerStart) / 1000;
     clearInterval(timerInterval);
     timerEl.textContent = formatTime(totalTime, true);
 
-    stopListeningRace(matchBtnEl);
+    stopListeningRace(matchBtnEl, listenBtn);
 
     const { isNewBest } = saveRaceResult(gridSize, totalTime);
 
