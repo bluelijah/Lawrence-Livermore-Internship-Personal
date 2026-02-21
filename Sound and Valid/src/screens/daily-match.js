@@ -7,9 +7,7 @@ import { TonePlayer } from "../audio/tone-player.js";
 import { PitchDetector } from "../audio/pitch-detector.js";
 import { FrequencyMeter } from "../ui/frequency-meter.js";
 import { getDailyObjectIndex, getTodayDateStr } from "../utils/daily-seed.js";
-import { getDailyState, saveDailyState, getDailyStreak } from "../utils/storage.js";
 import { celebrate, celebrateHarmonic } from "../ui/celebration.js";
-import { recordListen, recordMatch } from "../utils/db.js";
 
 const TOLERANCE = 0.05;
 const MATCH_DURATION = 0.75;
@@ -34,7 +32,7 @@ export function render(container) {
     obj.boundary
   );
 
-  let state = getDailyState(dateStr) || {
+  let state = {
     objectId: obj.id,
     attempts: 0,
     matched: false,
@@ -70,25 +68,6 @@ export function render(container) {
     )
   );
   screen.appendChild(header);
-
-  // Already completed today
-  if (state.matched) {
-    const streak = getDailyStreak();
-    screen.appendChild(
-      el(
-        "div",
-        { className: "card text-center" },
-        el("h2", {}, "Already matched today!"),
-        el("p", { className: "mt-8" }, `You matched ${obj.name} in ${state.attempts} attempt${state.attempts !== 1 ? "s" : ""}.`),
-        streak > 0
-          ? el("div", { className: "mt-8" }, el("span", { className: "badge badge-success" }, `${streak} day streak`))
-          : null,
-        el("p", { className: "mt-16 text-sm" }, "Come back tomorrow for a new challenge!")
-      )
-    );
-    container.appendChild(screen);
-    return;
-  }
 
   // Object info card
   const infoCard = el(
@@ -148,7 +127,6 @@ export function render(container) {
         if (!tonePlayer) {
           tonePlayer = new TonePlayer(engine.getAudioContext());
         }
-        recordListen(obj.id);
         listenBtn.disabled = true;
         matchBtn.disabled = true;
         tonePlayer.play(obj.frequency, 2);
@@ -219,7 +197,6 @@ export function render(container) {
 
     state.attempts++;
     attemptsEl.textContent = `Attempts: ${state.attempts} / ${MAX_ATTEMPTS}`;
-    try { saveDailyState(dateStr, state); } catch (e) { console.error("saveDailyState failed:", e); }
 
     pitchDetector.start((frequency, clarity) => {
       meter.update(frequency, clarity);
@@ -278,12 +255,10 @@ export function render(container) {
   function onMatch(matchType) {
     state.matched = true;
     state.matchType = matchType;
-    saveDailyState(dateStr, state);
 
     if (pitchDetector) { pitchDetector.stop(); pitchDetector = null; }
     AudioEngine.getInstance().stopMicrophone();
     matchType === "harmonic" ? celebrateHarmonic() : celebrate();
-    recordMatch(obj.id, matchType);
     if (meter) {
       meter.setMatched(true);
       meter.setMatchProgress(1);
@@ -298,7 +273,6 @@ export function render(container) {
     // Show result after a brief pause
     setTimeout(() => {
       AudioEngine.getInstance().stopMicrophone();
-      const streak = getDailyStreak();
       meterContainer.innerHTML = "";
       meterContainer.appendChild(
         el(
@@ -306,9 +280,6 @@ export function render(container) {
           { className: "card text-center" },
           el("h2", {}, "Frequency matched!"),
           el("p", { className: "mt-8" }, `Matched in ${state.attempts} attempt${state.attempts !== 1 ? "s" : ""}`),
-          streak > 0
-            ? el("div", { className: "mt-8" }, el("span", { className: "badge badge-success" }, `${streak} day streak`))
-            : null,
           el("p", { className: "mt-16 text-sm" }, "Come back tomorrow for a new challenge!")
         )
       );

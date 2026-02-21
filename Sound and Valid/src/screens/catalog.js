@@ -3,7 +3,6 @@ import { navigate } from "../router.js";
 import { OBJECTS, getObjectsByCategory } from "../data/objects.js";
 import { CATEGORIES } from "../data/materials.js";
 import { icons } from "../ui/components.js";
-import { getAllObjectStars } from "../utils/db.js";
 
 export function render(container) {
   let activeCategory = "all";
@@ -95,11 +94,10 @@ export function render(container) {
 
   function updateList() {
     list.innerHTML = "";
-    const objects   = getObjectsByCategory(activeCategory);
-    const starsMap  = getAllObjectStars();
+    const objects = getObjectsByCategory(activeCategory);
     for (const obj of objects) {
       list.appendChild(
-        createObjectCard(obj, starsMap.get(obj.id) ?? 0, () => navigate(`object/${obj.id}`))
+        createObjectCard(obj, () => navigate(`object/${obj.id}`))
       );
     }
   }

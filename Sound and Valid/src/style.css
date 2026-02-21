@@ -637,11 +637,6 @@ p {
   color: var(--color-harmonic);
 }
 
-/* ─── Catalog Stars ─── */
-.object-stars { display: flex; gap: 2px; margin-top: 4px; }
-.star { font-size: 0.8rem; line-height: 1; color: #d1d5db; }
-.star.filled { color: #f59e0b; }
-
 /* ─── Race Stats ─── */
 .race-stats-block {
   margin-bottom: 12px;

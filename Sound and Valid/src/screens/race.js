@@ -6,8 +6,6 @@ import { TonePlayer } from "../audio/tone-player.js";
 import { PitchDetector } from "../audio/pitch-detector.js";
 import { FrequencyMeter } from "../ui/frequency-meter.js";
 import { shuffle, formatTime } from "../utils/helpers.js";
-import { getRaceBest, saveRaceResult, getRaceHistory } from "../utils/storage.js";
-import { recordListen, recordMatch } from "../utils/db.js";
 import { celebrate, celebrateHarmonic } from "../ui/celebration.js";
 
 const TOLERANCE = 0.05;
@@ -77,39 +75,6 @@ export function render(container) {
 
   sizeSelect.appendChild(sizeButtons);
 
-  // Show personal bests + recent history
-  function buildStatsBlock(size) {
-    const best    = getRaceBest(size);
-    const history = getRaceHistory(size, 3);
-    if (!best && !history.length) return null;
-
-    const block = el("div", { className: "race-stats-block" });
-    if (best) {
-      block.appendChild(
-        el("div", { className: "race-best-line" },
-          el("span", { className: "race-best-label" }, `${size} best`),
-          el("span", { className: "race-best-time" }, formatTime(best, true))
-        )
-      );
-    }
-    if (history.length) {
-      const histList = el("div", { className: "race-history" });
-      for (const entry of history) {
-        histList.appendChild(
-          el("span", { className: "race-history-entry" }, formatTime(entry.time_seconds, true))
-        );
-      }
-      block.appendChild(histList);
-    }
-    return block;
-  }
-
-  const statsBlock = el("div", { className: "mt-16" });
-  const b2 = buildStatsBlock("2x2");
-  const b3 = buildStatsBlock("3x3");
-  if (b2) statsBlock.appendChild(b2);
-  if (b3) statsBlock.appendChild(b3);
-  if (b2 || b3) sizeSelect.appendChild(statsBlock);
 
   screen.appendChild(sizeSelect);
 
@@ -180,7 +145,6 @@ export function render(container) {
         const engine = AudioEngine.getInstance();
         await engine.init();
         if (!tonePlayer) tonePlayer = new TonePlayer(engine.getAudioContext());
-        if (activeIndex >= 0) recordListen(raceObjects[activeIndex].id);
         listenBtn.disabled = true;
         matchBtnEl.disabled = true;
         tonePlayer.play(raceObjects[activeIndex].frequency, 1.5);
@@ -291,7 +255,6 @@ export function render(container) {
             }
 
             resolvedType === "harmonic" ? celebrateHarmonic() : celebrate();
-            recordMatch(raceObjects[activeIndex].id, resolvedType);
             meter.setMatched(true);
             meter.startDrain(1500);
             matchStart = null; lostAt = null;
@@ -352,8 +315,6 @@ export function render(container) {
 
     stopListeningRace(matchBtnEl, listenBtn);
 
-    const { isNewBest } = saveRaceResult(gridSize, totalTime);
-
     meterArea.innerHTML = "";
     meterArea.appendChild(
       el(
@@ -361,9 +322,6 @@ export function render(container) {
         { className: "card text-center mt-16" },
         el("h2", {}, "Race Complete!"),
         el("div", { className: "timer mt-8" }, formatTime(totalTime, true)),
-        isNewBest
-          ? el("div", { className: "mt-8" }, el("span", { className: "badge badge-success" }, "New Personal Best!"))
-          : null,
         el(
           "div",
           { className: "flex gap-8 mt-16 justify-between" },

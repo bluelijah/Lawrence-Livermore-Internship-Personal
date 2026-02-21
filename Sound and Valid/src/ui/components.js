@@ -39,7 +39,7 @@ export function el(tag, attrs = {}, ...children) {
 /**
  * Create an object card for the catalog/bingo.
  */
-export function createObjectCard(obj, stars = 0, onClick) {
+export function createObjectCard(obj, onClick) {
   const card = el(
     "div",
     { className: "card card-interactive catalog-grid-item", onclick: onClick },
@@ -48,14 +48,7 @@ export function createObjectCard(obj, stars = 0, onClick) {
       style: { backgroundColor: obj.material.color },
     }),
     el("div", { className: "object-name" }, obj.name),
-    el("div", { className: "object-freq" }, `${obj.frequency.toFixed(1)} Hz`),
-    el(
-      "div",
-      { className: "object-stars" },
-      ...[1, 2, 3].map((n) =>
-        el("span", { className: `star${n <= stars ? " filled" : ""}` }, "★")
-      )
-    )
+    el("div", { className: "object-freq" }, `${obj.frequency.toFixed(1)} Hz`)
   );
   return card;
 }

@@ -1,6 +1,5 @@
 import { el, icons } from "../ui/components.js";
 import { navigate } from "../router.js";
-import { markTutorialSeen } from "../utils/storage.js";
 
 export function render(container) {
   const screen = el("div", { className: "screen" });
@@ -131,7 +130,6 @@ export function render(container) {
     el("button", {
       className: "btn btn-primary btn-large mt-8",
       onclick: () => {
-        markTutorialSeen();
         navigate("");
       },
     }, "Got it \u2014 Let's Play!")

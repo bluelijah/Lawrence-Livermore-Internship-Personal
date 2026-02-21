@@ -3,13 +3,9 @@ import { registerRoute, initRouter } from "./router.js";
 import { icons } from "./ui/components.js";
 import { getCurrentPath } from "./router.js";
 import { initLocale } from "./utils/i18n.js";
-import { initDB } from "./utils/db.js";
 
 // Initialize i18n before any rendering
 initLocale();
-
-// Initialize SQLite DB before any rendering
-await initDB();
 
 // Register routes with lazy-loaded screen modules
 registerRoute("", () => import("./screens/home.js"));

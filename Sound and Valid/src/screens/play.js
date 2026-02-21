@@ -1,9 +1,7 @@
 import { el, icons } from "../ui/components.js";
 import { navigate } from "../router.js";
-import { getDailyStreak } from "../utils/storage.js";
 
 export function render(container) {
-  const streak = getDailyStreak();
 
   const screen = el(
     "div",
@@ -47,14 +45,7 @@ export function render(container) {
             el("h3", {}, "Daily Match"),
             el("p", { className: "text-sm" }, "One object per day. Can you match its frequency?")
           )
-        ),
-        streak > 0
-          ? el(
-              "div",
-              { className: "mt-8" },
-              el("span", { className: "badge badge-success" }, `${streak} day streak`)
-            )
-          : null
+        )
       ),
 
       // Race

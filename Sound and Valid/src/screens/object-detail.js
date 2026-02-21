@@ -9,7 +9,6 @@ import { PitchDetector } from "../audio/pitch-detector.js";
 import { FrequencyMeter } from "../ui/frequency-meter.js";
 import { formatFreq, formatDimension } from "../utils/helpers.js";
 import { celebrate, celebrateHarmonic } from "../ui/celebration.js";
-import { recordListen, recordMatch } from "../utils/db.js";
 
 const TOLERANCE = 0.05;
 const MATCH_DURATION = 0.75;
@@ -121,7 +120,6 @@ export function render(container, objectId) {
         { length: currentLength, width: obj.dimensions.width, thickness: currentThickness },
         obj.boundary
       );
-      recordListen(obj.id);
       listenBtn.disabled = true;
       matchBtn.disabled = true;
       tonePlayer.play(freq, 2);
@@ -358,7 +356,6 @@ export function render(container, objectId) {
           listenBtn.disabled = false;
           matchStart = null; lostAt = null;
           resolvedType === "harmonic" ? celebrateHarmonic() : celebrate();
-          recordMatch(obj.id, resolvedType);
           meter.setMatched(true);
           meter.startDrain(1500);
           setTimeout(() => {
