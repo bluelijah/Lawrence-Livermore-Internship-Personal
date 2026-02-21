@@ -70,11 +70,12 @@ html {
   color: var(--color-text);
   background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
+  scrollbar-gutter: stable both-edges; /* reserve equal gutter on both sides — prevents layout shift when scrollbar appears/disappears between pages */
 }
 
 body {
   min-height: 100dvh;
-  overflow-x: hidden;
+  overflow-x: clip; /* clip (not hidden) — prevents horizontal scroll without creating a scroll container, so position:fixed still works */
 }
 
 #app {
@@ -810,8 +811,9 @@ p {
 .landing-canvas {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;   /* always full viewport width, even if parent is narrowed by scrollbar gutter */
   height: 100%;
   z-index: 0;
   pointer-events: none;
