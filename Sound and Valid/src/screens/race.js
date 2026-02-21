@@ -293,6 +293,7 @@ export function render(container) {
             if (matched.size >= count) {
               onRaceComplete(timerEl, matchBtnEl, meterArea);
             } else {
+              stopListeningRace(matchBtnEl);
               setTimeout(() => {
                 meter.setMatched(false);
                 meter.setMatchProgress(0);
