@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "planck": "^1.4.2",
+    "planck-js": "^1.3.0"
+  }
+}
